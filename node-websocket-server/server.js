@@ -34,87 +34,55 @@ function originIsAllowed(origin) {
     return true;
 }
 
-let keyInputs = [];
-let controllerConnection;
-let websiteConnection;
-
-let websiteConnections = {};
-let controllerConnections = {};
-
+//Keep track of all connections to the server
 let connections = [];
 
+//Add an event listener when the http server recieves a request
 wsServer.on('request', function (request) {
-  let websiteRequest = false;
-  if (request.requestedProtocols.includes('website')) {
-    websiteRequest = true;
-  }
+    if (!originIsAllowed(request.origin)) {
+        // Make sure we only accept requests from an allowed origin
+        request.reject();
+        console.log(new Date() + ' Connection from origin ' + request.origin + ' rejected.');
+        return;
+    }
 
-  let controllerRequest = false;
-  if (request.requestedProtocols.includes('controller')) {
-    controllerRequest = true;
-  }
+    //First set this boolean to true
+    //This is part of a ping-pong heartbeat method that makes sure a websocket connection doesn't time out
+    request.socket.isAlive = true;
+    
+    //Accepting the request returns the socket connection
+    var connection = request.accept('echo-protocol', request.origin);
+    //Add the connections
+    connections.push(connection);
 
-  if (!originIsAllowed(request.origin)) {
-    // Make sure we only accept requests from an allowed origin
-    request.reject();
-    console.log(
-      new Date() + ' Connection from origin ' + request.origin + ' rejected.'
-    );
-    return;
-  }
+    //The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
+    const interval = setInterval(() => {
+        connections.forEach((connection) => {
+        if (connection.isAlive === false) {
+            return connection.socket.end();
+        }
 
-  let uid = request.requestedProtocols[2];
-  var connection = request.accept('echo-protocol', request.origin);
+        connection.isAlive = false;
+        connection.send('ping');
+        });
+    }, 100000);
 
-  request.socket.isAlive = true;
+    console.log(new Date() + ' Connection accepted.');
+    //Handles the messages that the clients send to the server
+    connection.on('message', function (message) {
+        //If the connection has sent back "pong" then make sure it stays alive
+        if (message.utf8Data.includes('pong')) {
+            let connectionUID = message.utf8Data.substring(5);
+            connection.socket.isAlive = true;
 
-  connections.push(connection);
-
-  const interval = setInterval(() => {
-    connections.forEach((connection) => {
-      if (connection.isAlive === false) {
-        return connection.socket.end();
-      }
-
-      connection.isAlive = false;
-      connection.send('ping');
+            return;
+        }
     });
-  }, 100000);
 
-  if (controllerRequest) {
-    controllerConnections[uid] = connection;
-  } else if (websiteRequest) {
-    websiteConnections[uid] = connection;
-  }
-
-  console.log(new Date() + ' Connection accepted.');
-  connection.on('message', function (message) {
-    if (message.utf8Data.includes('pong')) {
-      let connectionUID = message.utf8Data.substring(5);
-
-      if (websiteRequest) {
-        websiteConnections[connectionUID].isAlive = true;
-      } else {
-        controllerConnections[uid].isAlive = true;
-      }
-
-      return;
-    }
-
-    if (websiteRequest) {
-      keyInputs.push(message);
-      if (controllerConnections[uid] != null) {
-        controllerConnections[uid].send(message.utf8Data);
-      } else {
-        websiteConnections[uid].send(
-          'Error: Controller Application Not Started'
+    //Handle closing of the server
+    connection.on('close', function (reasonCode, description) {
+        console.log(
+            new Date() + ' Peer ' + connection.remoteAddress + ' disconnected.'
         );
-      }
-    }
-  });
-  connection.on('close', function (reasonCode, description) {
-    console.log(
-      new Date() + ' Peer ' + connection.remoteAddress + ' disconnected.'
-    );
-  });
+    });
 });
