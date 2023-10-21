@@ -4,5 +4,11 @@
     "dependencies": {
         "websocket": "^1.0.34",
         "ws": "^8.14.2"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.1"
+    },
+    "scripts": {
+        "devStart": "nodemon node-websocket-server/server.js"
     }
 }
