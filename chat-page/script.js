@@ -7,7 +7,7 @@ let textArea = document.getElementById("chatTextArea");
 let sendButton = document.getElementById("sendButton");
 sendButton.onclick = () => {
     let value = textArea.value;
-    let jsonText = `{"message": ${value}, "from": "sending"}`;
+    let jsonText = `{"message": "${value}", "from": "sending"}`;
 
     client.send(jsonText);
 }
