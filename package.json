@@ -1,6 +1,6 @@
 {
     "name": "knockoff-zoom",
-    "version": "1.0",
+    "version": "1.0.0",
     "dependencies": {
         "websocket": "^1.0.34",
         "ws": "^8.14.2"
