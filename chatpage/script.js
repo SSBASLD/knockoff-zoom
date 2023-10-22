@@ -16,3 +16,7 @@ let returnTextArea = document.getElementById("returnTextArea");
 client.onmessage = (message) => {
     returnTextArea.innerHTML = message.data;
 };
+
+client.onclose = () => {
+    console.log("closed");
+}
