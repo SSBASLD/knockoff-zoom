@@ -1,10 +1,14 @@
 //Import the required dependencies
+const express = require("express")
+const app = express();
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 
 //Create a http server with a simple request listener
   //A http server is simply a computer program that uses the response/request model implemented by the World Wide Web and the HTTP
-var server = http.createServer(function (request, response) {
+var server = http.Server(app,function (request, response) {
+    console.log("hi");
+
     //Log the time of the request
     console.log(new Date() + ' Received request for ' + request.url);
     response.writeHead(200);
@@ -35,12 +39,13 @@ function originIsAllowed(origin) {
 }
 
 //Keep track of all connections to the server
-let connections = [];
+let connections = new Map();
 
 //Add an event listener when the http server recieves a request
 wsServer.on('request', function (request) {
-    if (!originIsAllowed(request.origin)) {
-        // Make sure we only accept requests from an allowed origin
+    console.log("hi");
+
+    if (!originIsAllowed(request.origin)) {  // Make sure we only accept requests from an allowed origin
         request.reject();
         console.log(new Date() + ' Connection from origin ' + request.origin + ' rejected.');
         return;
@@ -52,20 +57,10 @@ wsServer.on('request', function (request) {
     
     //Accepting the request returns the socket connection
     var connection = request.accept('echo-protocol', request.origin);
-    //Add the connections
-    connections.push(connection);
+    connections.set(connection, true); //Add the connections
 
     //The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
-    const interval = setInterval(() => {
-        connections.forEach((connection) => {
-        if (connection.isAlive === false) {
-            return connection.socket.end();
-        }
-
-        connection.isAlive = false;
-        connection.send('ping');
-        });
-    }, 100000);
+    const interval = setInterval(heartbeat, 100000);
 
     console.log(new Date() + ' Connection accepted.');
     //Handles the messages that the clients send to the server
@@ -86,3 +81,15 @@ wsServer.on('request', function (request) {
         );
     });
 });
+
+function heartbeat() {
+    connections.forEach((value, connection, map) => {
+        if (connection.isAlive === false) {
+            connections.delete(connection);
+            return connection.socket.end();
+        }
+
+        connection.isAlive = false;
+        connection.send("ping");
+    })
+}

@@ -1,7 +1,15 @@
 {
-    "name": "knockoff-zoom",
-    "version": "1.0",
-    "dependencies": {
-        "websocket": "^1.0.34"
-    }
+  "name": "knockoff-zoom",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "devStart": "nodemon node-websocket-server/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
 }

@@ -10,6 +10,9 @@
   </head>
   <body>
     <main>
+      <script>
+          client = new WebSocket('localhost:3000/node-websocket-server/server.js', ['echo-protocol', 'controller', uid]);
+      </script>
         <h1>Welcome to My Website Not</h1>  
     </main>
 	<script src="index.js"></script>
