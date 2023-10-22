@@ -49,6 +49,16 @@ wsServer.on('request', function (request) {
         return;
     }
 
+    let sendingRequest = false;
+    if (request.requestedProtocols.includes('sending')) {
+        sendingRequest = true;
+    }
+  
+    let recievingRequest = false;
+    if (request.requestedProtocols.includes('recieving')) {
+        recievingRequest = true;
+    }
+
     //First set this boolean to true
     //This is part of a ping-pong heartbeat method that makes sure a websocket connection doesn't time out
     request.socket.isAlive = true;
@@ -58,11 +68,11 @@ wsServer.on('request', function (request) {
     //Add the connections
     connections.push(connection);
 
-    if (request.requestedProtocols.includes('sending')) {
+    if (sendingRequest) {
         sendingConnection = connection;
     }
-  
-    if (request.requestedProtocols.includes('recieving')) {
+ 
+    if (recievingRequest) {
         recievingConnection = connection;
     }
 
