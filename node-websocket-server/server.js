@@ -76,6 +76,8 @@ wsServer.on('request', function (request) {
             connection.socket.isAlive = true;
 
             return;
+        } else {
+            connection.send("Recieved");
         }
     });
 
