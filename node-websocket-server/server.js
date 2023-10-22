@@ -37,6 +37,9 @@ function originIsAllowed(origin) {
 //Keep track of all connections to the server
 let connections = [];
 
+let recievingConnection;
+let sendingConnection;
+
 //Add an event listener when the http server recieves a request
 wsServer.on('request', function (request) {
     if (!originIsAllowed(request.origin)) {
@@ -54,6 +57,14 @@ wsServer.on('request', function (request) {
     var connection = request.accept('echo-protocol', request.origin);
     //Add the connections
     connections.push(connection);
+
+    if (request.requestedProtocols.includes('sending')) {
+        sendingConnection = connection;
+    }
+  
+    if (request.requestedProtocols.includes('recieving')) {
+        recievingConnection = connection;
+    }
 
     //The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
     const interval = setInterval(() => {
@@ -77,7 +88,12 @@ wsServer.on('request', function (request) {
 
             return;
         } else {
-            connection.send("Recieved");
+            let json = JSON.parse(message.utf8Data);
+            if (json.from == "sending") {
+                recievingConnection.send(json.message);
+            } else if (json.from == "recieving") {
+                sendingConnection.send(json.message);
+            }
         }
     });
 
