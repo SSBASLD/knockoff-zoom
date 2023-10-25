@@ -85,7 +85,6 @@ wsServer.on('request', function (request) {
     connection.on('message', function (message) {
         //If the connection has sent back "pong" then make sure it stays alive
         if (message.utf8Data.includes('pong')) {
-            let connectionUID = message.utf8Data.substring(5);
             connection.socket.isAlive = true;
 
             return;

@@ -20,6 +20,11 @@ async function setUpSocket() {
     }
 
     client.onmessage = (message) => {
+        if (message.data == 'ping') {
+            client.send('pong');
+            return;
+        }
+
         returnTextArea.innerHTML = message.data;
     };
 }
