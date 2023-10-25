@@ -4,8 +4,6 @@ sendButton.onclick = () => {
     let value = textArea.value;
     let jsonText = `{"message": "${value}", "roomKey": "${roomKey}"}`;
 
-    console.log(jsonText);
-
     client.send(jsonText);
 }
 
