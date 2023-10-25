@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>My Website</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+  </head>
+  <body>
+    <main>
+        <h1 class="centered">Knockoff Zoom</h1>
+    </main>
+    <button
+      class="button"
+      style="left: 35%; top: 52%; font-size: 200%;"
+      id="Create a Room Button",
+      onclick="createRoom()"
+    >
+      Create a room
+    </button>
+
+    <button
+      class="button"
+      style="left: 65%; top: 52%; font-size: 200%;"
+      id="Join a Room Popup Button"
+      onclick="popUp(true)"
+    >
+      Join a Room
+    </button>
+
+    <div id="Join Room Popup Div" class="centered popup">
+      <div class="centered", style="font-size: 150%; top: 20%; text-align: center;">Enter Room Code</div><br />
+      <input class="textInput, centered" id="Room Key Input" style="font-size: 150%; top: 50%;"/> <br />
+
+      <button
+        class="button popupButton"
+        style="top: 80%; height: 20%;"
+        id="Join a Room Button"
+        onclick="joinRoom()"
+      >
+        Join Room
+      </button>
+
+      <img src=test.png alt="test" class="centered" style="width:5%; height: 15%; left: 96%; top: 10%;" id="X Button">
+    </div>
+
+	  <script src="script.js"></script>
+    <link type="text/css" rel="stylesheet" href="./style.css" />
+  </body>
+</html>

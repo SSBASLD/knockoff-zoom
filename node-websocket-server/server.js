@@ -1,10 +1,14 @@
 //Import the required dependencies
+const express = require("express")
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 
+//Create an express instance
+const app = express();
+
 //Create a http server with a simple request listener
   //A http server is simply a computer program that uses the response/request model implemented by the World Wide Web and the HTTP
-var server = http.createServer(function (request, response) {
+var server = http.createServer(app, function (request, response) {
     //Log the time of the request
     console.log(new Date() + ' Received request for ' + request.url);
     response.writeHead(200);
@@ -35,10 +39,7 @@ function originIsAllowed(origin) {
 }
 
 //Keep track of all connections to the server
-let connections = [];
-
-let recievingConnection;
-let sendingConnection;
+let connections = {};
 
 //Add an event listener when the http server recieves a request
 wsServer.on('request', function (request) {
@@ -49,15 +50,7 @@ wsServer.on('request', function (request) {
         return;
     }
 
-    let sendingRequest = false;
-    if (request.requestedProtocols.includes('sending')) {
-        sendingRequest = true;
-    }
-  
-    let recievingRequest = false;
-    if (request.requestedProtocols.includes('recieving')) {
-        recievingRequest = true;
-    }
+    let roomKey = request.requestedProtocols[1];
 
     //First set this boolean to true
     //This is part of a ping-pong heartbeat method that makes sure a websocket connection doesn't time out
@@ -66,25 +59,21 @@ wsServer.on('request', function (request) {
     //Accepting the request returns the socket connection
     var connection = request.accept('echo-protocol', request.origin);
     //Add the connections
-    connections.push(connection);
 
-    if (sendingRequest) {
-        sendingConnection = connection;
-    }
- 
-    if (recievingRequest) {
-        recievingConnection = connection;
-    }
+    if (connections.roomKey == null) {
+        connections.roomKey = [];
+        connections.roomKey.push(connection);
+    } else connections.roomKey.push(connection);
 
     //The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
     const interval = setInterval(() => {
         connections.forEach((connection) => {
-        if (connection.isAlive === false) {
-            return connection.socket.end();
-        }
+            if (connection.isAlive === false) {
+                return connection.socket.end();
+            }
 
-        connection.isAlive = false;
-        connection.send('ping');
+            connection.isAlive = false;
+            connection.send('ping');
         });
     }, 100000);
 
@@ -98,12 +87,10 @@ wsServer.on('request', function (request) {
 
             return;
         } else {
-            let json = JSON.parse(message.utf8Data);
-            if (json.from == "sending") {
-                recievingConnection.send(json.message);
-            } else if (json.from == "recieving") {
-                sendingConnection.send(json.message);
-            }
+            let jsonData = JSON.parse(message.utf8data);
+
+            let otherConnection = connections[jsonData.roomKey].filter((socket) => connection != socket);
+            otherConnection.send(jsonData.message);
         }
     });
 

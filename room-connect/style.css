@@ -1,0 +1,83 @@
+body {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+  }
+  
+  .centered {
+    font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
+    font-size: 500%;
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    -moz-transform: translate(-50%, -50%); /* Firefox */
+    -ms-transform: translate(-50%, -50%); /* IE 9 */
+    -webkit-transform: translate(-50%, -50%); /* Safari and Chrome*/
+    -o-transform: translate(-50%, -50%); /* Opera */
+    transform: translate(-50%, -50%);
+  
+    /* optional size in px or %: */
+    width: 80%;
+    height: 20%;
+  }
+  
+  .button {
+    font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
+    font-size: 150%;
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    -moz-transform: translate(-50%, -50%); /* Firefox */
+    -ms-transform: translate(-50%, -50%); /* IE 9 */
+    -webkit-transform: translate(-50%, -50%); /* Safari and Chrome*/
+    -o-transform: translate(-50%, -50%); /* Opera */
+    transform: translate(-50%, -50%);
+  
+    /* optional size in px or %: */
+    width: 20%;
+    height: 10%;
+  }
+  
+  .popup {
+    background-color: white;
+    border-width: thick;
+    border-style: solid;
+    border-color: black;
+  
+    font-size: 300%;
+    text-align: left;
+    padding-left: 3%;
+    padding-top: 3%;
+    top: 50%;
+    width: 50%;
+    height: 30%;
+  }
+  
+  .textInput {
+    width: 90%;
+    height: 10%;
+    font-size: 90%;
+  }
+  
+  .popupButton {
+    font-size: 80%;
+    top: 85%;
+  }
+  
+  .videosize {
+    position: absolute;
+    z-index: -1;
+    width: 99%;
+    height: 99%;
+    object-fit: cover;
+  
+    left: 50%;
+    top: 50%;
+    -moz-transform: translate(-50%, -50%); /* Firefox */
+    -ms-transform: translate(-50%, -50%); /* IE 9 */
+    -webkit-transform: translate(-50%, -50%); /* Safari and Chrome*/
+    -o-transform: translate(-50%, -50%); /* Opera */
+    transform: translate(-50%, -50%);
+  }
+  
