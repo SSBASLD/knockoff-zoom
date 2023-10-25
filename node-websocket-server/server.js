@@ -87,7 +87,7 @@ wsServer.on('request', function (request) {
 
             return;
         } else {
-            let jsonData = JSON.parse(message.utf8Fata);
+            let jsonData = JSON.parse(message.utf8Data);
 
             let otherConnection = connections[jsonData.roomKey].filter((socket) => connection != socket);
             otherConnection.send(jsonData.message);
