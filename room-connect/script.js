@@ -9,17 +9,13 @@ async function createRoom() {
 
 let roomKeyInput = document.getElementById("Room Key Input");
 async function joinRoom() {
-    let uid = roomKeyInput.textContent;
+    let uid = roomKeyInput.value;
+    console.log(uid);
 
-    if (sessionStorage.getItem(uid) != null) {
-        await sessionStorage.setItem("Room Key", uid);
+    await sessionStorage.setItem("Room Key", uid);
 
-        let editedString = window.location.href.replace(/index.html/, '');
-        window.location.href = editedString + 'chat-page/index.html';
-    } else {
-        alert("No room exists with that room code!");
-        return;
-    }
+    let editedString = window.location.href.replace(/index.html/, '');
+    window.location.href = editedString + 'chat-page/index.html';
 }
 
 let xButton = document.getElementById("X Button");

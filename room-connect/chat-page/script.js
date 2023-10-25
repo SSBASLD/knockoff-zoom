@@ -1,11 +1,3 @@
-let roomKey = sessionStorage.getItem('Room Key');
-console.log(roomKey);
-
-let client = new WebSocket("wss://node-websocket-server-a4uv.onrender.com/ws/", ['echo-protocol', roomKey]);
-client.onopen = () => {
-    console.log("Connection Established");
-}
-
 let textArea = document.getElementById("chatTextArea");
 let sendButton = document.getElementById("sendButton");
 sendButton.onclick = () => {
@@ -16,6 +8,20 @@ sendButton.onclick = () => {
 }
 
 let returnTextArea = document.getElementById("returnTextArea");
-client.onmessage = (message) => {
-    returnTextArea.innerHTML = message.data;
-};
+
+let roomKey;
+let client;
+async function setUpSocket() {
+    roomKey = await sessionStorage.getItem('Room Key');
+
+    client = new WebSocket("wss://node-websocket-server-a4uv.onrender.com/ws/", ['echo-protocol', roomKey]);
+    client.onopen = () => {
+        console.log("Connection Established");
+    }
+
+    client.onmessage = (message) => {
+        returnTextArea.innerHTML = message.data;
+    };
+}
+
+setUpSocket();
