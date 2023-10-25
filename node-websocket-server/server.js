@@ -60,10 +60,10 @@ wsServer.on('request', function (request) {
     var connection = request.accept('echo-protocol', request.origin);
     //Add the connections
 
-    if (connections.roomKey == null) {
-        connections.roomKey = [];
-        connections.roomKey.push(connection);
-    } else connections.roomKey.push(connection);
+    if (connections[roomKey] == null) {
+        connections[roomKey] = [];
+        connections[roomKey].push(connection);
+    } else connections[roomKey].push(connection);
 
     //The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
     const interval = setInterval(() => {
@@ -90,7 +90,10 @@ wsServer.on('request', function (request) {
             let jsonData = JSON.parse(message.utf8Data);
 
             let otherConnection = connections[jsonData.roomKey].filter((socket) => connection != socket);
-            otherConnection.send(jsonData.message);
+
+            if (otherConnection.length == 0) {
+                connection.send("Error: Nobody else in room");
+            } else otherConnection[0].send(jsonData.message);
         }
     });
 
