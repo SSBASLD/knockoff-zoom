@@ -1,4 +1,4 @@
-let textArea = document.getElementById("chatTextArea");
+let textArea = document.getElementById("chatInput");
 let sendButton = document.getElementById("sendButton");
 sendButton.onclick = () => {
     let value = textArea.value;
