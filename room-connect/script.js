@@ -1,5 +1,5 @@
 async function createRoom() {
-    var uid = "id" + Math.random().toString(16).slice(2)
+    var uid = "id" + Math.random().toString(16).slice(2);
     await sessionStorage.setItem(uid, true);
     await sessionStorage.setItem("Room Key", uid);
     
