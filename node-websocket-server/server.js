@@ -83,6 +83,8 @@ wsServer.on('request', function (request) {
     console.log(new Date() + ' Connection accepted.');
     //Handles the messages that the clients send to the server
     connection.on('message', function (message) {
+        console.log(message.utf8Data);
+
         //If the connection has sent back "pong" then make sure it stays alive
         if (message.utf8Data.includes('pong')) {
             connection.socket.isAlive = true;
@@ -95,7 +97,9 @@ wsServer.on('request', function (request) {
 
             if (otherConnection.length == 0) {
                 connection.send("Error: Nobody else in room");
-            } else otherConnection[0].send(jsonData.message);
+            } else {
+                otherConnection[0].send(jsonData.message);
+            }
         }
     });
 
