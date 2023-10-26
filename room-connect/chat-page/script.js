@@ -9,7 +9,7 @@ sendButton.onclick = () => {
     client.send(jsonText);
 }
 
-let returnTextArea = document.getElementById("returnTextArea");
+let returnTextArea = document.getElementById("Return Text Area");
 
 let roomKey;
 let client;
