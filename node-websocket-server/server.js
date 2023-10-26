@@ -91,6 +91,8 @@ wsServer.on('request', function (request) {
 
             return;
         } else {
+            connection.socket.isAlive = true;
+
             let jsonData = JSON.parse(message.utf8Data);
 
             let otherConnection = roomConnections[jsonData.roomKey].filter((socket) => connection != socket);
