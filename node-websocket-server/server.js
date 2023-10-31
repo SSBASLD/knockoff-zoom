@@ -83,26 +83,33 @@ wsServer.on('request', function (request) {
     console.log(new Date() + ' Connection accepted.');
     //Handles the messages that the clients send to the server
     connection.on('message', function (message) {
-        console.log(message.utf8Data);
-
-        //If the connection has sent back "pong" then make sure it stays alive
-        if (message.utf8Data.includes('pong')) {
-            connection.socket.isAlive = true;
-
+        try {
+            var jsonData = JSON.parse(message.utf8Data);
+        } catch (e) {
+            if (message.data == "pong") return;
+            console.log("Message data was not in JSON format");
+            console.error(e);
             return;
-        } else {
+        } finally {
             connection.socket.isAlive = true;
-
-            let jsonData = JSON.parse(message.utf8Data);
-
-            let otherConnection = roomConnections[jsonData.roomKey].filter((socket) => connection != socket);
-
-            if (otherConnection.length == 0) {
-                connection.send("Error: Nobody else in room");
-            } else {
-                otherConnection[0].send(jsonData.message);
-            }
         }
+
+        let otherConnection = roomConnections[jsonData.roomKey].filter((socket) => connection != socket);
+
+        let message;
+        let type;
+        if (otherConnection.length == 0) {
+            type = "Error"
+            message = "Error: Nobody else in room";
+        } else {
+            type = "Message"
+            message = jsonData.message;
+        }
+
+        let personIndex = roomConnections[jsonData.roomKey].indexOf(otherConnection[0]) + 1;
+        let jsonString= `{"type": "${type}", "message": "${message}", "person": "${personIndex}"}`;
+
+        otherConnection[0].send(jsonString);
     });
 
     //Handle closing of the server

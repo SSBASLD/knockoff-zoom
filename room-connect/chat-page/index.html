@@ -17,18 +17,27 @@
         <input id="chatInput" class="centered textInput" placeholder="Type messages here..." style="font-size: 1.2vw;">
         <img src=../../images/arrow.png alt="arrow" class="centered arrowButton" id="Arrow Button">
 
-        <div class="chatWindow centered" style="top: 46%; height: 90%; width: 95%; left: 50%" id="Return Text Area">
-        </div>
-    </div>
+        <div class="chatWindow centered" style="top: 46%; height: 91%; width: 97%; left: 50%; font-size: 1.3vw; overflow-y: auto; overflow-x:hidden; margin-bottom: 3vw" id="Chat Window">
+          <div 
+            class="chatWindow centered" 
+            style="top: 45%; height: 90%; width: 100%; left: 50%; font-size: 1.3vw; text-align: right; padding-right: 3vw; border-color: transparent;" 
+            id="Right Return Text Area"
+          >
+          </div>
 
-    <form>
-        Input Text to Send:
-        <br>
-        <input id="chatTextArea">
-    </form>
-    
-    <br>
-    <button id="sendButton"> Send </button>
+          <div 
+            class="chatWindow centered" 
+            style="top: 45%; height: 90%; width: 100%; left: 50%; font-size: 1.3vw; text-align: left; padding-left: 3vw; border-color: transparent;" 
+            id="Left Return Text Area"
+          >
+          </div>
+
+          <div class="grow-wrap" style="position: absolute; left: 2%; top: 40%; width: 10%; height: 10%; font-size: 1vw;" id="Chat Square">
+            <textarea name="text" id="text" onInput="this.parentNode.dataset.replicatedValue = this.value" class="chatSquare" style="font-size: 1.5vw;"></textarea>
+          </div>
+        </div>
+
+    </div>
 
     <br>
     <div id="returnTextArea"></div>
