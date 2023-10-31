@@ -96,18 +96,18 @@ wsServer.on('request', function (request) {
 
         let otherConnection = roomConnections[jsonData.roomKey].filter((socket) => connection != socket);
 
-        let message;
+        let sentMessage;
         let type;
         if (otherConnection.length == 0) {
             type = "Error"
-            message = "Error: Nobody else in room";
+            sentMessage = "Error: Nobody else in room";
         } else {
             type = "Message"
-            message = jsonData.message;
+            sentMessage = jsonData.message;
         }
 
         let personIndex = roomConnections[jsonData.roomKey].indexOf(otherConnection[0]) + 1;
-        let jsonString= `{"type": "${type}", "message": "${message}", "person": "${personIndex}"}`;
+        let jsonString= `{"type": "${type}", "message": "${sentMessage}", "person": "${personIndex}"}`;
 
         otherConnection[0].send(jsonString);
     });
