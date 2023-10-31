@@ -86,7 +86,7 @@ wsServer.on('request', function (request) {
         try {
             var jsonData = JSON.parse(message.utf8Data);
         } catch (e) {
-            if (message.data == "pong") return;
+            if (message.utf8Data == "pong") return;
             console.log("Message data was not in JSON format");
             console.error(e);
             return;
