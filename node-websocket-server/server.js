@@ -1,3 +1,10 @@
+// Establish new message class for Websockets
+class Message{
+    constructor(head, content) {
+        this.head = head;
+        this.content = content;
+    }
+}   
 //Import the required dependencies
 const express = require("express")
 const app = express();
@@ -55,23 +62,35 @@ wsServer.on('request', function (request) {
     //This is part of a ping-pong heartbeat method that makes sure a websocket connection doesn't time out
     request.socket.isAlive = true;
     
-    //Accepting the request returns the socket connection
-    var connection = request.accept('echo-protocol', request.origin);
-    connections.set(connection, true); //Add the connections
+    var connection = request.accept('echo-protocol', request.origin); // Accepts request
+    var uid = Math.random().toString(16); // Generates random ID
+    connections.set(connection, uid); //Add the connections and ties to custom ID
 
     //The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
     const interval = setInterval(heartbeat, 100000);
 
-    console.log(new Date() + ' Connection accepted.');
-    //Handles the messages that the clients send to the server
-    connection.on('message', function (message) {
-        //If the connection has sent back "pong" then make sure it stays alive
-        if (message.utf8Data.includes('pong')) {
-            let connectionUID = message.utf8Data.substring(5);
-            connection.socket.isAlive = true;
+    console.log(new Date() + ' Connection accepted.'); // Logs connection
 
-            return;
+    connection.on('message', (event) => { // Handles messages sent to WS
+        try {
+            var message = JSON.parse(event.utf8Data)
+            switch (message.head) {
+                case "callRequest":
+                    handleCallRequests(event.socket.uid, message.content);
+                    break;
+                case "acceptRequest":
+                    handleAcceptRequests(event.socket.uid, message.content);
+                    break;
+                case "iceCandidate":
+                    handleIceCandidate(event.socket.uid, message.content);
+                    break;
+            }
+        } catch (error) {
+          console.log(error)  
+        } finally {
+            event.socket.isAlive = true;
         }
+
     });
 
     //Handle closing of the server
@@ -91,5 +110,28 @@ function heartbeat() {
 
         connection.isAlive = false;
         connection.send("ping");
+    })
+}
+
+function handleCallRequests(uid, callOffer) {
+    connections.forEach((value, connection) => {
+        if (connection.uid != uid) {
+            connection.send(JSON.stringify(new Message("callRecieved", callOffer)));
+        }
+    })
+}
+
+function handleAcceptRequests(uid, acceptOffer) {
+    connections.forEach((value, connection) => {
+        if (connection.uid != uid) {
+            connection.send(JSON.stringify(new Message("acceptRecieved", acceptOffer)));
+        }
+    })
+}
+function handleAcceptRequests(uid, iceCandidate) {
+    connections.forEach((value, connection) => {
+        if (connection.uid != uid) {
+            connection.send(JSON.stringify(new Message("iceCandidate", iceCandidate)));
+        }
     })
 }
