@@ -67,7 +67,7 @@ wsServer.on('request', function (request) {
         roomConnections[roomKey].push(connection);
     } else roomConnections[roomKey].push(connection);
 
-    let personIndex = roomConnections[jsonData.roomKey].indexOf(connection) + 1;
+    let personIndex = roomConnections[roomKey].indexOf(connection) + 1;
     let jsonString= `{"type": "Info", "message": "", "person": "${personIndex}"}`;
 
     connection.send(jsonString);
