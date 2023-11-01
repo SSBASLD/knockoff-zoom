@@ -67,6 +67,11 @@ wsServer.on('request', function (request) {
         roomConnections[roomKey].push(connection);
     } else roomConnections[roomKey].push(connection);
 
+    let personIndex = roomConnections[jsonData.roomKey].indexOf(connection) + 1;
+    let jsonString= `{"type": "Info", "message": "", "person": "${personIndex}"}`;
+
+    connection.send(jsonString);
+
     //The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
     const interval = setInterval(() => {
         connections.forEach((value, connection, map) => {

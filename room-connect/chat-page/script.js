@@ -13,7 +13,45 @@ arrowButton.onclick = () => {
     let jsonText = `{"message": "${value}", "roomKey": "${roomKey}"}`;
 
     client.send(jsonText);
+
+    if (person != null) {
+        if (jsonData.person == 1) {
+            leftTextArea.innerHTML += "Person 1: ";
+            lineBreakInsertor(jsonData.message, "left");
+        } else {
+            rightTextArea.innerHTML += "Person 2: ";
+            lineBreakInsertor(jsonData.message, "right");
+        }
+    }
 }
+
+function lineBreakInsertor(text, side) {
+    console.log("a");
+    
+    for (let i = 0; i < text.length; i += 24) {
+
+        let slicedText = text.slice(i, i + 25);
+
+        let oneLineBreak = document.createElement("br");
+        if (side == "left") {
+            leftTextArea.innerHTML += slicedText;
+            leftTextArea.appendChild(oneLineBreak);
+            rightTextArea.appendChild(oneLineBreak);
+        } else if (side == "right") {
+            rightTextArea.innerHTML += slicedText;
+            rightTextArea.appendChild(oneLineBreak);
+            leftTextArea.appendChild(oneLineBreak);
+        }
+    }
+
+    if (side == "left") {
+        rightTextArea.appendChild(oneLineBreak);
+    } else if (side == "right") {
+        rightTextArea.appendChild(oneLineBreak);
+    }
+}
+
+let person;
 
 let roomKey;
 let client;
@@ -45,10 +83,14 @@ async function setUpSocket() {
             return;
         } else if (jsonData.type == "Message") {
             if (jsonData.person == 1) {
-                leftTextArea.innerHTML = "Person 1: " + jsonData.message; 
+                leftTextArea.innerHTML += "Person 1: ";
+                lineBreakInsertor(jsonData.message, "left");
             } else {
-                rightTextArea.innerHTML = "Person 2: " + jsonData.message;
+                rightTextArea.innerHTML += "Person 2: ";
+                lineBreakInsertor(jsonData.message, "right");
             }
+        } else if (jsonData.type == "Info") {
+            let person = jsonData.person;
         }
     };
 }
