@@ -108,6 +108,7 @@ wsServer.on('request', function (request) {
             sentMessage = "Error: Nobody else in room";
             let jsonString= `{"type": "${type}", "message": "${sentMessage}", "person": ""}`;
             connection.send(jsonString);
+            return;
         } else {
             type = "Message"
             sentMessage = jsonData.message;

@@ -9,10 +9,7 @@ let arrowButton = document.getElementById("Arrow Button");
 
 let counter = 0;
 arrowButton.onclick = () => {
-    let value = textArea.value;
-    let jsonText = `{"message": "${value}", "roomKey": "${roomKey}"}`;
-
-    client.send(jsonText);
+    console.log(person);
 
     if (person != null) {
         if (jsonData.person == 1) {
@@ -23,6 +20,11 @@ arrowButton.onclick = () => {
             lineBreakInsertor(jsonData.message, "right");
         }
     }
+
+    let value = textArea.value;
+    let jsonText = `{"message": "${value}", "roomKey": "${roomKey}"}`;
+
+    client.send(jsonText);
 }
 
 function lineBreakInsertor(text, side) {
@@ -91,6 +93,7 @@ async function setUpSocket() {
             }
         } else if (jsonData.type == "Info") {
             let person = jsonData.person;
+            console.log(person);
         }
     };
 }
