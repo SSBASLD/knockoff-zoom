@@ -9,8 +9,6 @@ let arrowButton = document.getElementById("Arrow Button");
 
 let counter = 0;
 arrowButton.onclick = () => {
-    console.log(person);
-
     if (person != null) {
         if (jsonData.person == 1) {
             leftTextArea.innerHTML += "Person 1: ";
@@ -28,7 +26,7 @@ arrowButton.onclick = () => {
 }
 
 function lineBreakInsertor(text, side) {
-    console.log("a");
+    console.log(person);
     
     for (let i = 0; i < text.length; i += 24) {
 
