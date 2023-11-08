@@ -9,6 +9,56 @@
     transform: translate(-50%, -50%);
 }
 
+.person {
+  position: absolute;
+  -moz-transform: translate(-50%, 0%); /* Firefox */
+  -ms-transform: translate(-50%, 0%); /* IE 9 */
+  -webkit-transform: translate(-50%, 0%); /* Safari and Chrome*/
+  -o-transform: translate(-50%, 0%); /* Opera */
+  transform: translate(-50%, 0%);
+  width: 12%;
+}
+
+.rightTextArea {
+  position: absolute;
+  -moz-transform: translate(-50%, 0%); /* Firefox */
+  -ms-transform: translate(-50%, 0); /* IE 9 */
+  -webkit-transform: translate(-50%, 0%); /* Safari and Chrome*/
+  -o-transform: translate(-50%, 0%); /* Opera */
+  transform: translate(-50%, 0%);
+
+  line-height: 1.3vw;
+  top: 45%; 
+  height: 2%; 
+  width: 80%; 
+  left: 38%; 
+  font-size: 1.3vw; 
+  text-align: right; 
+  padding-left: 3vw; 
+  border-color: transparent; 
+  word-wrap: break-word;
+}
+
+.leftTextArea {
+  position: absolute;
+  -moz-transform: translate(-50%, 0%); /* Firefox */
+  -ms-transform: translate(-50%, 0); /* IE 9 */
+  -webkit-transform: translate(-50%, 0%); /* Safari and Chrome*/
+  -o-transform: translate(-50%, 0%); /* Opera */
+  transform: translate(-50%, 0%);
+
+  line-height: 1.3vw;
+  top: 45%; 
+  height: 2%; 
+  width: 80%; 
+  left: 48%; 
+  font-size: 1.3vw; 
+  text-align: left; 
+  padding-left: 3vw; 
+  border-color: transparent; 
+  word-wrap: break-word;
+}
+
 .chatWindow {
     background-color: transparent;
     border-width: thick;
