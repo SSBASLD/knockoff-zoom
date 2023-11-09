@@ -85,7 +85,7 @@ wsServer.on('request', function (request) {
             connection.isAlive = false;
             connection.send("ping");
         })
-    }, 1000);
+    }, 10000);
 
     console.log(new Date() + ' Connection accepted.');
     //Handles the messages that the clients send to the server
@@ -110,7 +110,7 @@ wsServer.on('request', function (request) {
         if (otherConnection.length == 0) {
             type = "Error"
             sentMessage = "Error: Nobody else in room";
-            let jsonString= `{"type": "${type}", "message": "${sentMessage}", "person": ""}`;
+            let jsonString = `{"type": "${type}", "message": "${sentMessage}", "person": ""}`;
             connection.send(jsonString);
             return;
         } else {
