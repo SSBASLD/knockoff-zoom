@@ -92,7 +92,6 @@ async function setUpSocket() {
             var jsonData = JSON.parse(message.data);
         } catch (e) {
             if (message.data == "ping") {
-                client.send('pong');
                 return;
             }
 

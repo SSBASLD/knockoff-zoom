@@ -75,9 +75,7 @@ wsServer.on('request', function (request) {
     //The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
     const interval = setInterval(() => {
         connections.forEach((value, connection, map) => {
-            console.log("pinged");
             if (connection.isAlive === false) {
-                console.log("connection killed");
                 connections.delete(connection);
                 return connection.socket.end();
             }
@@ -93,8 +91,6 @@ wsServer.on('request', function (request) {
         try {
             var jsonData = JSON.parse(message.utf8Data);
         } catch (e) {
-            connection.isAlive = true;
-
             if (message.utf8Data == "pong") return;
             console.log("Message data was not in JSON format");
             console.error(e);
