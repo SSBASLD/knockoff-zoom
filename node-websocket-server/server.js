@@ -116,7 +116,7 @@ function heartbeat() {
 function handleCallRequests(uid, callOffer) {
     connections.forEach((value, connection) => {
         if (connection.uid != uid) {
-            connection.send(JSON.stringify(new Message("callRecieved", callOffer)));
+            connection.send(JSON.stringify(new Message("incommingCall", callOffer)));
         }
     })
 }
@@ -124,14 +124,14 @@ function handleCallRequests(uid, callOffer) {
 function handleAcceptRequests(uid, acceptOffer) {
     connections.forEach((value, connection) => {
         if (connection.uid != uid) {
-            connection.send(JSON.stringify(new Message("acceptRecieved", acceptOffer)));
+            connection.send(JSON.stringify(new Message("incommingAccept", acceptOffer)));
         }
     })
 }
-function handleAcceptRequests(uid, iceCandidate) {
+function handleIceCandidate(uid, iceCandidate) {
     connections.forEach((value, connection) => {
         if (connection.uid != uid) {
-            connection.send(JSON.stringify(new Message("iceCandidate", iceCandidate)));
+            connection.send(JSON.stringify(new Message("incommingICE", iceCandidate)));
         }
     })
 }
