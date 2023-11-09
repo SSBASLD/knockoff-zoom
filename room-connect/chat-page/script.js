@@ -107,8 +107,6 @@ async function setUpSocket() {
             alert(jsonData.message);
             return;
         } else if (jsonData.type == "Message") {
-            console.log(jsonData.person);
-
             if (jsonData.person == 1) {
                 createTextArea(jsonData.message, "left");
             } else {
