@@ -105,11 +105,9 @@ async function setUpSocket() {
             return;
         } else if (jsonData.type == "Message") {
             if (jsonData.person == 1) {
-                leftTextArea.innerHTML += "Person 1: ";
-                lineBreakInsertor(jsonData.message, "left");
+                createTextArea(jsonData.message, "left");
             } else {
-                rightTextArea.innerHTML += "Person 2: ";
-                lineBreakInsertor(jsonData.message, "right");
+                createTextArea(jsonData.message, "right");
             }
         } else if (jsonData.type == "Info") {
             person = jsonData.person;
