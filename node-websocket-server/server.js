@@ -124,6 +124,8 @@ wsServer.on('request', function (request) {
 
     //Handle closing of the server
     connection.on('close', function (reasonCode, description) {
+        console.log(reasonCode + " " + description);
+
         console.log(
             new Date() + ' Peer ' + connection.remoteAddress + ' disconnected.'
         );
