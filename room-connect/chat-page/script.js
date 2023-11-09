@@ -91,7 +91,10 @@ async function setUpSocket() {
         try {
             var jsonData = JSON.parse(message.data);
         } catch (e) {
-            if (message.data == "ping") return;
+            if (message.data == "ping") {
+                client.send('pong');
+                return;
+            }
 
             console.log("Message data was not sent in JSON format");
             console.error(e);
@@ -104,6 +107,8 @@ async function setUpSocket() {
             alert(jsonData.message);
             return;
         } else if (jsonData.type == "Message") {
+            console.log(jsonData.person);
+
             if (jsonData.person == 1) {
                 createTextArea(jsonData.message, "left");
             } else {
