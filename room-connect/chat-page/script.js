@@ -13,6 +13,10 @@ let oneLineHeight = document.getElementById("oneLineHeight").scrollHeight;
 let twoLineHeight = document.getElementById("twoLineHeight").scrollHeight;
 let lineDiff = twoLineHeight - oneLineHeight;
 
+window.addEventListener('resize', (event) => {
+    
+});
+
 var person = 2;
 arrowButton.onclick = () => {
 
