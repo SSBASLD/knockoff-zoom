@@ -83,7 +83,7 @@ wsServer.on('request', function (request) {
             connection.isAlive = false;
             connection.send("ping");
         })
-    }, 100000);
+    }, 10000);
 
     console.log(new Date() + ' Connection accepted.');
     //Handles the messages that the clients send to the server
@@ -124,6 +124,13 @@ wsServer.on('request', function (request) {
 
     //Handle closing of the server
     connection.on('close', function (reasonCode, description) {
+        connections.delete(connection);
+
+        let connectionIndex = roomConnections[roomKey].indexOf(connection);
+        roomConnections[roomKey].splice(connectionIndex, 1);
+
+        console.log(reasonCode + " " + description);
+
         console.log(
             new Date() + ' Peer ' + connection.remoteAddress + ' disconnected.'
         );
