@@ -83,7 +83,7 @@ wsServer.on('request', function (request) {
             connection.isAlive = false;
             connection.send("ping");
         })
-    }, 100000);
+    }, 10000);
 
     console.log(new Date() + ' Connection accepted.');
     //Handles the messages that the clients send to the server
