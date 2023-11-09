@@ -52,15 +52,15 @@ wsServer.on('request', function (request) {
     }
 
     let roomKey = request.requestedProtocols[1];
-
-    //First set this boolean to true
-    //This is part of a ping-pong heartbeat method that makes sure a websocket connection doesn't time out
-    request.socket.isAlive = true;
     
     //Accepting the request returns the socket connection
     var connection = request.accept('echo-protocol', request.origin);
     //Add the connections
     connections.set(connection, true);
+
+    //First set this boolean to true
+    //This is part of a ping-pong heartbeat method that makes sure a websocket connection doesn't time out
+    connection.isAlive = false;
 
     if (roomConnections[roomKey] == null) {
         roomConnections[roomKey] = [];
@@ -93,14 +93,14 @@ wsServer.on('request', function (request) {
         try {
             var jsonData = JSON.parse(message.utf8Data);
         } catch (e) {
-            connection.socket.isAlive = true;
+            connection.isAlive = true;
 
             if (message.utf8Data == "pong") return;
             console.log("Message data was not in JSON format");
             console.error(e);
             return;
         } finally {
-            connection.socket.isAlive = true;
+            connection.isAlive = true;
         }
 
         let otherConnection = roomConnections[jsonData.roomKey].filter((socket) => connection != socket);
