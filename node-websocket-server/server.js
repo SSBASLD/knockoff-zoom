@@ -92,7 +92,7 @@ wsServer.on('request', function (request) {
             var jsonData = JSON.parse(message.utf8Data);
         } catch (e) {
             connection.socket.isAlive = true;
-            
+
             if (message.utf8Data == "pong") return;
             console.log("Message data was not in JSON format");
             console.error(e);
@@ -116,7 +116,7 @@ wsServer.on('request', function (request) {
             sentMessage = jsonData.message;
         }
 
-        let personIndex = roomConnections[jsonData.roomKey].indexOf(otherConnection[0]) + 1;
+        let personIndex = roomConnections[jsonData.roomKey].indexOf(connection) + 1;
         let jsonString= `{"type": "${type}", "message": "${sentMessage}", "person": "${personIndex}"}`;
 
         otherConnection[0].send(jsonString);
