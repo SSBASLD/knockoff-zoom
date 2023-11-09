@@ -74,6 +74,8 @@ wsServer.on('request', function (request) {
 
     //The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
     const interval = setInterval(() => {
+        console.log("pinged");
+        
         connections.forEach((value, connection, map) => {
             if (connection.isAlive === false) {
                 connections.delete(connection);
@@ -83,7 +85,7 @@ wsServer.on('request', function (request) {
             connection.isAlive = false;
             connection.send("ping");
         })
-    }, 5000);
+    }, 1000);
 
     console.log(new Date() + ' Connection accepted.');
     //Handles the messages that the clients send to the server
