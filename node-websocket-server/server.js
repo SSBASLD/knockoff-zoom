@@ -78,6 +78,7 @@ wsServer.on('request', function (request) {
         
         connections.forEach((value, connection, map) => {
             if (connection.isAlive === false) {
+                console.log("connection killed");
                 connections.delete(connection);
                 return connection.socket.end();
             }
