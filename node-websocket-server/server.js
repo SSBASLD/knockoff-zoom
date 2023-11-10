@@ -76,6 +76,7 @@ wsServer.on('request', function (request) {
     const interval = setInterval(() => {
         connections.forEach((value, connection, map) => {
             if (connection.isAlive === false) {
+                console.log("connection killed");
                 connections.delete(connection);
                 return connection.socket.end();
             }
