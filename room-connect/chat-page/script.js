@@ -9,18 +9,29 @@ let chatWindow = document.getElementById("Chat Window");
 let diff = 9;
 let topPercentage = 2;
 
-let oneLineHeight = document.getElementById("oneLineHeight").scrollHeight;
-let twoLineHeight = document.getElementById("twoLineHeight").scrollHeight;
+let oneLine = document.getElementById("oneLineHeight");
+let twoLine = document.getElementById("twoLineHeight")
+
+let oneLineHeight = oneLine.scrollHeight;
+let twoLineHeight = twoLine.scrollHeight;
 let lineDiff = twoLineHeight - oneLineHeight;
 
 window.addEventListener('resize', (event) => {
-    
+    oneLineHeight = oneLine.scrollHeight;
+    twoLineHeight = twoLine.scrollHeight;
+    lineDiff = twoLineHeight - oneLineHeight;
 });
 
 var person = 2;
 arrowButton.onclick = () => {
-
     let value = textArea.value;
+    textArea.value = "";
+
+    value = value.trim();
+    if (value == "") {
+        return;
+    }
+
     let jsonText = `{"message": "${value}", "roomKey": "${roomKey}"}`;
 
     client.send(jsonText);
@@ -77,6 +88,8 @@ function createTextArea(value, side) {
     }
     
     topPercentage += diff + 3*((numOfLines - 2) < 0 ? 0 : numOfLines - 2);
+
+    chatWindow.scrollTop = chatWindow.scrollHeight - chatWindow.clientHeight;
 }
 
 let roomKey;
