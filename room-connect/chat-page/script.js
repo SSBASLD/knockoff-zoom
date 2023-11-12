@@ -94,6 +94,7 @@ function createTextArea(value, side) {
 
 let roomKey;
 let client;
+let autoReconnectDelay = 5000;
 async function setUpSocket() {
     roomKey = await sessionStorage.getItem('Room Key');
     console.log(roomKey);
@@ -104,11 +105,20 @@ async function setUpSocket() {
         console.log("Connection Established");
     }
 
+    client.onclose = function(e) {
+        console.log('echo-protocol Client Closed');
+        console.log(e.reason);
+
+        setTimeout(() => {
+            setUpSocket();
+        }, autoReconnectDelay)
+    };
+
     client.onmessage = (message) => {
         try {
             var jsonData = JSON.parse(message.data);
         } catch (e) {
-            if (message.data == "ping") {
+            if (message.data == "ping") { 
                 return;
             }
 
