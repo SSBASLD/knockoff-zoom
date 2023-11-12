@@ -60,7 +60,7 @@ wsServer.on('request', function (request) {
 
     //First set this boolean to true
     //This is part of a ping-pong heartbeat method that makes sure a websocket connection doesn't time out
-    connection.isAlive = false;
+    connection.isAlive = true;
 
     if (roomConnections[roomKey] == null) {
         roomConnections[roomKey] = [];
@@ -97,6 +97,7 @@ wsServer.on('request', function (request) {
             console.error(e);
             return;
         } finally {
+            console.log("still alive");
             connection.isAlive = true;
         }
 
