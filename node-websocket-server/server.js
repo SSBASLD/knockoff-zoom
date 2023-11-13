@@ -76,19 +76,22 @@ wsServer.on('request', function (request) {
             var message = JSON.parse(event.utf8Data)
             switch (message.head) {
                 case "callRequest":
-                    handleCallRequests(event.socket.uid, message.content);
+                    console.log("Handling New Call Request");
+                    handleCallRequests(connection.socket.uid, message.content);
                     break;
                 case "acceptRequest":
-                    handleAcceptRequests(event.socket.uid, message.content);
+                    console.log("Handling Accept Request");
+                    handleAcceptRequests(connection.socket.uid, message.content);
                     break;
                 case "iceCandidate":
-                    handleIceCandidate(event.socket.uid, message.content);
+                    console.log("Handling new ICE candidate");
+                    handleIceCandidate(connection.socket.uid, message.content);
                     break;
             }
         } catch (error) {
-          console.log(error)  
+            console.log(error)  
         } finally {
-            event.socket.isAlive = true;
+            connection.isAlive = true;
         }
 
     });
@@ -104,6 +107,7 @@ wsServer.on('request', function (request) {
 function heartbeat() {
     connections.forEach((value, connection, map) => {
         if (connection.isAlive === false) {
+            console.log("Connection Killed");
             connections.delete(connection);
             return connection.socket.end();
         }

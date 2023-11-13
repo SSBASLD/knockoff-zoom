@@ -13,7 +13,7 @@ const _constraints = {
 };
 
 const _iceServers = {'iceServers': [{'urls': 'stun:stun3.l.google.com:19302'}]}; // sets up which stun server to use.
-const client = new WebSocket('ws://localhost:8080', ['echo-protocol']);
+const client = new WebSocket('wss://node-webrtc-server.onrender.com/ws/', ['echo-protocol']);
 var localVideo;
 var remoteVideo;
 var localStream;
@@ -24,22 +24,26 @@ async function start() {
     localVideo = document.getElementById("localVideo");
     remoteVideo = document.getElementById("remoteVideo");
     localStream = await navigator.mediaDevices.getUserMedia(_constraints);
-    localVideo.srcObject = localStream;
+        localVideo.srcObject = localStream;
 }
 
 client.onopen = () => {
+    console.log("connection established");
     client.onmessage = (event) => {
         try {
             if (!peerConnection) startUp(false); 
-            var message = JSON.parse(event);
+            var message = JSON.parse(event.data);
             switch (message.head) {
                 case "incommingCall":
-                    acceptCall(messgae.content)
+                    console.log("Recieved New Incomming Call");
+                    acceptCall(messgae.content);
                     break;
                 case "incommingICE":
-                    handleNewIceCandidate(message.content)
+                    console.log("Recieved New ICE Candidate");
+                    handleNewIceCandidate(message.content);
                     break;
                 case "incommingAccept":
+                    console.log("Recieved New Accept Offer");
                     handleAccept(message.content);
                     break;
             }
@@ -66,6 +70,7 @@ async function startUp(isCaller) {
     });
 
     if (isCaller == true) {
+        console.log("Attempting to start call");
         let offer = await peerConnection.createOffer();
         await peerConnection.setLocalDescription(offer);
         client.send(JSON.stringify(new Message("callRequest")));
