@@ -89,8 +89,9 @@ wsServer.on('request', function (request) {
                     break;
             }
         } catch (error) {
-            console.log(error)  
+            console.log(error);  
         } finally {
+            console.log("Connection Is Still Alive");
             connection.isAlive = true;
         }
 
