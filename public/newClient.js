@@ -47,7 +47,7 @@ client.onopen = () => {
                     handleAccept(message.content);
                     break;
                 default: 
-                client.send("Pong");
+                client.send(JSON.stringify(new Message("Ping", "Ping")));
             }
         } catch (error) {
             console.log(error);
@@ -75,7 +75,7 @@ async function startUp(isCaller) {
         console.log("Attempting to start call");
         let offer = await peerConnection.createOffer();
         await peerConnection.setLocalDescription(offer);
-        client.send(JSON.stringify(new Message("callRequest")));
+        client.send(JSON.stringify(new Message("callRequest", offer)));
     }
 }
 

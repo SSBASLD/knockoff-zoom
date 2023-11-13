@@ -112,6 +112,7 @@ function heartbeat() {
             return connection.socket.end();
         }
 
+        console.log("Attempting To Ping");
         connection.isAlive = false;
         connection.send(JSON.stringify(new Message("Ping", "Ping")));
     })
