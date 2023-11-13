@@ -24,7 +24,7 @@ async function start() {
     localVideo = document.getElementById("localVideo");
     remoteVideo = document.getElementById("remoteVideo");
     localStream = await navigator.mediaDevices.getUserMedia(_constraints);
-        localVideo.srcObject = localStream;
+    localVideo.srcObject = localStream;
 }
 
 client.onopen = () => {
@@ -46,6 +46,8 @@ client.onopen = () => {
                     console.log("Recieved New Accept Offer");
                     handleAccept(message.content);
                     break;
+                default: 
+                client.send("Pong");
             }
         } catch (error) {
             console.log(error);

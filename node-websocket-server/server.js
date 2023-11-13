@@ -113,7 +113,7 @@ function heartbeat() {
         }
 
         connection.isAlive = false;
-        connection.send("ping");
+        connection.send(JSON.stringify(new Message("Ping", "Ping")));
     })
 }
 
