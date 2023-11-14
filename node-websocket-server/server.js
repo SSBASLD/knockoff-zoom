@@ -42,6 +42,20 @@ function originIsAllowed(origin) {
 let roomConnections = {};
 let connections = new Map();
 
+//The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
+const interval = setInterval(() => {
+    connections.forEach((value, connection, map) => {
+        if (connection.isAlive === false) {
+            console.log("connection killed");
+            connections.delete(connection);
+            return connection.socket.end();
+        }
+    
+        connection.isAlive = false;
+        connection.send("ping");
+    })
+}, 10000);
+
 //Add an event listener when the http server recieves a request
 wsServer.on('request', function (request) {
     if (!originIsAllowed(request.origin)) {
@@ -71,20 +85,6 @@ wsServer.on('request', function (request) {
     let jsonString= `{"type": "Info", "message": "", "person": "${personIndex}"}`;
 
     connection.send(jsonString);
-
-    //The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
-    const interval = setInterval(() => {
-        connections.forEach((value, connection, map) => {
-            if (connection.isAlive === false) {
-                console.log("connection killed");
-                connections.delete(connection);
-                return connection.socket.end();
-            }
-    
-            connection.isAlive = false;
-            connection.send("ping");
-        })
-    }, 10000);
 
     console.log(new Date() + ' Connection accepted.');
     //Handles the messages that the clients send to the server
@@ -124,7 +124,6 @@ wsServer.on('request', function (request) {
 
     //Handle closing of the server
     connection.on('close', function (reasonCode, description) {
-        clearInterval(interval);
         connections.delete(connection);
 
         let connectionIndex = roomConnections[roomKey].indexOf(connection);
