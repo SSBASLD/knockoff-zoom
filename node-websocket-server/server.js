@@ -123,7 +123,7 @@ wsServer.on('request', function (request) {
         }
 
         let jsonString= `{"type": "${type}", "message": "${sentMessage}", "person": "${personIndex}"}`;
-        otherConnection[0].send(jsonString);
+        otherConnection.send(jsonString);
     });
 
     //Handle closing of the server
