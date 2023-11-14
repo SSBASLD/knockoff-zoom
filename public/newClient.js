@@ -36,7 +36,7 @@ client.onopen = () => {
             switch (message.head) {
                 case "incommingCall":
                     console.log("Recieved New Incomming Call");
-                    acceptCall(messgae.content);
+                    acceptCall(message.content);
                     break;
                 case "incommingICE":
                     console.log("Recieved New ICE Candidate");
@@ -88,7 +88,7 @@ async function acceptCall(offer) {
 }
 
 async function sendIceCandidate(iceCandidate){
-    client.send(JSON.stringify(new Message("iceCandidate", iceCandidate)))
+    client.send(JSON.stringify(new Message("iceCandidate", iceCandidate)));
 }
 async function handleNewIceCandidate(iceCandidate) {
     await peerConnection.addIceCandidate(iceCandidate);
