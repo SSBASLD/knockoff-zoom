@@ -87,6 +87,8 @@ wsServer.on('request', function (request) {
                     console.log("Handling new ICE candidate");
                     handleIceCandidate(connection.socket.uid, message.content);
                     break;
+                default:
+                    console.log(message.head);
             }
         } catch (error) {
             console.log(error);  
