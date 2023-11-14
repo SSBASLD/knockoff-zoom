@@ -124,6 +124,7 @@ wsServer.on('request', function (request) {
 
     //Handle closing of the server
     connection.on('close', function (reasonCode, description) {
+        clearInterval(interval);
         connections.delete(connection);
 
         let connectionIndex = roomConnections[roomKey].indexOf(connection);
