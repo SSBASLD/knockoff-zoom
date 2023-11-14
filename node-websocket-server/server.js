@@ -143,7 +143,7 @@ wsServer.on('request', function (request) {
     });
 });
 
-function getByValue(map, searchValue) {
+function getKeyByValue(map, searchValue) {
     for (let [key, value] of map.entries()) {
       if (value === searchValue)
         return key;
