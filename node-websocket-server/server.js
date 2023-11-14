@@ -77,11 +77,16 @@ wsServer.on('request', function (request) {
     connection.isAlive = true;
 
     if (roomConnections[roomKey] == null) {
-        roomConnections[roomKey] = [];
-        roomConnections[roomKey].push(connection);
-    } else roomConnections[roomKey].push(connection);
+        roomConnections[roomKey] = new Map();
+        roomConnections[roomKey].set(connection, 1);
+    } else {
+        let indices = roomConnections[roomKey].values().next().value;
+        let otherIndex = (indices == 2) ? 1 : 2;
 
-    let personIndex = roomConnections[roomKey].indexOf(connection) + 1;
+        roomConnections[roomKey].set(connection, otherIndex);
+    }
+
+    let personIndex = roomConnections[roomKey].get(connection);
     let jsonString= `{"type": "Info", "message": "", "person": "${personIndex}"}`;
 
     connection.send(jsonString);
@@ -101,7 +106,8 @@ wsServer.on('request', function (request) {
             connection.isAlive = true;
         }
 
-        let otherConnection = roomConnections[jsonData.roomKey].filter((socket) => connection != socket);
+        let otherIndex = roomConnections[jsonData.roomKey].get(connection) == 2 ? 1 : 2;
+        let otherConnection = getKeyByValue(roomConnections[jsonData.roomKey], otherIndex);
 
         let sentMessage;
         let type;
@@ -116,18 +122,18 @@ wsServer.on('request', function (request) {
             sentMessage = jsonData.message;
         }
 
-        let personIndex = roomConnections[jsonData.roomKey].indexOf(connection) + 1;
         let jsonString= `{"type": "${type}", "message": "${sentMessage}", "person": "${personIndex}"}`;
-
         otherConnection[0].send(jsonString);
     });
 
     //Handle closing of the server
     connection.on('close', function (reasonCode, description) {
         connections.delete(connection);
+        roomConnections[roomKey].delete(connection);
 
-        let connectionIndex = roomConnections[roomKey].indexOf(connection);
-        roomConnections[roomKey].splice(connectionIndex, 1);
+        if (roomConnections[roomKey].size == 0) {
+            roomConnections[roomKey] = null;
+        }
 
         console.log(reasonCode + " " + description);
 
@@ -136,3 +142,10 @@ wsServer.on('request', function (request) {
         );
     });
 });
+
+function getByValue(map, searchValue) {
+    for (let [key, value] of map.entries()) {
+      if (value === searchValue)
+        return key;
+    }
+}
