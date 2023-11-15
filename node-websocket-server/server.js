@@ -1,3 +1,30 @@
+class VideoRoom {
+    constructor() {
+        this.connections = new Map();
+        this.messageLog = [];
+    }
+
+    addConnection(connection) {
+        if (this.connections.size == 0) {
+            this.connections.set(connection, 1);
+            return 1;
+        } else {
+            let indices = this.connections.values().next().value;
+            let otherIndex = (indices == 2) ? 1 : 2;
+    
+            this.connections.set(connection, otherIndex);
+            return otherIndex;
+        }
+    }
+
+    getConnectionByIndex(index) {
+        for (let [key, value] of this.connection.entries()) {
+            if (value === index)
+              return key;
+        }
+    } 
+}
+
 //Import the required dependencies
 const express = require("express")
 var WebSocketServer = require('websocket').server;
@@ -77,16 +104,9 @@ wsServer.on('request', function (request) {
     connection.isAlive = true;
 
     if (roomConnections[roomKey] == null) {
-        roomConnections[roomKey] = new Map();
-        roomConnections[roomKey].set(connection, 1);
-    } else {
-        let indices = roomConnections[roomKey].values().next().value;
-        let otherIndex = (indices == 2) ? 1 : 2;
-
-        roomConnections[roomKey].set(connection, otherIndex);
+        roomConnections[roomKey] = new VideoRoom();
     }
-
-    let personIndex = roomConnections[roomKey].get(connection);
+    let personIndex = roomConnections[roomKey].addConnection(connection);
     let jsonString= `{"type": "Info", "message": "", "person": "${personIndex}"}`;
 
     connection.send(jsonString);
@@ -106,8 +126,8 @@ wsServer.on('request', function (request) {
             connection.isAlive = true;
         }
 
-        let otherIndex = roomConnections[jsonData.roomKey].get(connection) == 2 ? 1 : 2;
-        let otherConnection = getKeyByValue(roomConnections[jsonData.roomKey], otherIndex);
+        let otherIndex = personIndex == 2 ? 1 : 2;
+        let otherConnection = roomConnections[jsonData.roomKey].getConnectionByIndex(otherIndex);
 
         let sentMessage;
         let type;
@@ -122,16 +142,17 @@ wsServer.on('request', function (request) {
             sentMessage = jsonData.message;
         }
 
-        let jsonString= `{"type": "${type}", "message": "${sentMessage}", "person": "${personIndex}"}`;
+        let jsonString = `{"type": "${type}", "message": "${sentMessage}", "person": "${personIndex}"}`;
+        roomConnections[jsonData.roomKey].messageLog.push(jsonString);
         otherConnection.send(jsonString);
     });
 
     //Handle closing of the server
     connection.on('close', function (reasonCode, description) {
         connections.delete(connection);
-        roomConnections[roomKey].delete(connection);
+        roomConnections[roomKey].connections.delete(connection);
 
-        if (roomConnections[roomKey].size == 0) {
+        if (roomConnections[roomKey].connections.size == 0) {
             roomConnections[roomKey] = null;
         }
 
@@ -142,10 +163,3 @@ wsServer.on('request', function (request) {
         );
     });
 });
-
-function getKeyByValue(map, searchValue) {
-    for (let [key, value] of map.entries()) {
-      if (value === searchValue)
-        return key;
-    }
-}
