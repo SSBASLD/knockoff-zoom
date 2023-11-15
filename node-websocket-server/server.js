@@ -18,7 +18,7 @@ class VideoRoom {
     }
 
     getConnectionByIndex(index) {
-        for (let [key, value] of this.connection.entries()) {
+        for (let [key, value] of this.connections.entries()) {
             if (value === index)
               return key;
         }
