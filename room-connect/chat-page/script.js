@@ -139,6 +139,8 @@ async function setUpSocket() {
                 createTextArea(jsonData.message, "right");
             }
         } else if (jsonData.type == "Info") {
+            console.log(jsonData);
+
             person = jsonData.person;
         }
     };
