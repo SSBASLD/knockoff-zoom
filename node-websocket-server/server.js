@@ -22,7 +22,17 @@ class VideoRoom {
             if (value === index)
               return key;
         }
-    } 
+    }
+
+    logToString() {
+        let string = "";
+        for (const message of messageLog) {
+            string += `${message}`
+        }  
+        string = "[" + string + "]";
+        
+        return string;
+    }
 }
 
 //Import the required dependencies
@@ -107,7 +117,7 @@ wsServer.on('request', function (request) {
         roomConnections[roomKey] = new VideoRoom();
     }
     let personIndex = roomConnections[roomKey].addConnection(connection);
-    let jsonString= `{"type": "Info", "message": "[${roomConnections[roomKey].messageLog}]", "person": "${personIndex}"}`;
+    let jsonString= `{"type": "Info", "message": "${roomConnections[roomKey].logToString}", "person": "${personIndex}"}`;
     connection.send(jsonString);
 
     console.log(new Date() + ' Connection accepted.');
