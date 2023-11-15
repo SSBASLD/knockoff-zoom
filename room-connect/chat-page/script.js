@@ -116,6 +116,7 @@ async function setUpSocket() {
 
     client.onmessage = (message) => {
         try {
+            console.log(message.data);
             var jsonData = JSON.parse(message.data);
         } catch (e) {
             if (message.data == "ping") { 
