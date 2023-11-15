@@ -143,6 +143,7 @@ wsServer.on('request', function (request) {
 
         let jsonString = `{"type": "${type}", "message": "${sentMessage}", "person": "${personIndex}"}`;
         roomConnections[jsonData.roomKey].messageLog.push(jsonString);
+        console.log(roomConnections[jsonData.roomKey].messageLog);
         otherConnection.send(jsonString);
     });
 
