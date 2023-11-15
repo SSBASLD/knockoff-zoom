@@ -26,7 +26,7 @@ class VideoRoom {
 
     logToString() {
         let string = "";
-        for (const message of messageLog) {
+        for (const message of this.messageLog) {
             string += `"${message}"`;
         }  
         string = "[" + string + "]";
