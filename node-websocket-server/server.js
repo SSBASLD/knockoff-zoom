@@ -117,7 +117,7 @@ wsServer.on('request', function (request) {
         roomConnections[roomKey] = new VideoRoom();
     }
     let personIndex = roomConnections[roomKey].addConnection(connection);
-    let jsonString= `{"type": "Info", "message": "${roomConnections[roomKey].logToString}", "person": "${personIndex}"}`;
+    let jsonString= `{"type": "Info", "message": "${roomConnections[roomKey].logToString()}", "person": "${personIndex}"}`;
     connection.send(jsonString);
 
     console.log(new Date() + ' Connection accepted.');
