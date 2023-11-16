@@ -134,6 +134,8 @@ function handleCallRequests(uid, callOffer) {
 function handleAcceptRequests(uid, acceptOffer) {
     connections.forEach((value, connection) => {
         if (value != uid) {
+            console.log(uid);
+            console.log(value);
             connection.send(JSON.stringify(new Message("incommingAccept", acceptOffer)));
         }
     })

@@ -99,4 +99,5 @@ async function handleNewIceCandidate(iceCandidate) {
 }
 async function handleAccept(acceptOffer) {
     await peerConnection.setRemoteDescription(new RTCSessionDescription(acceptOffer));
+    console.log("Accepted call");
 }
