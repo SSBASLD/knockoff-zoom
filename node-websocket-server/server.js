@@ -64,6 +64,7 @@ wsServer.on('request', function (request) {
     
     var connection = request.accept('echo-protocol', request.origin); // Accepts request
     var uid = Math.random().toString(16); // Generates random ID
+    connection.uid = uid;
     connections.set(connection, uid); //Add the connections and ties to custom ID
 
     //The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
@@ -72,20 +73,21 @@ wsServer.on('request', function (request) {
     console.log(new Date() + ' Connection accepted.'); // Logs connection
 
     connection.on('message', (event) => { // Handles messages sent to WS
+        console.log(connection.uid);
         try {
             var message = JSON.parse(event.utf8Data)
             switch (message.head) {
                 case "callRequest":
                     console.log("Handling New Call Request");
-                    handleCallRequests(connection.socket.uid, message.content);
+                    handleCallRequests(connection.uid, message.content);
                     break;
                 case "acceptRequest":
                     console.log("Handling Accept Request");
-                    handleAcceptRequests(connection.socket.uid, message.content);
+                    handleAcceptRequests(connection.uid, message.content);
                     break;
                 case "iceCandidate":
                     console.log("Handling new ICE candidate");
-                    handleIceCandidate(connection.socket.uid, message.content);
+                    handleIceCandidate(connection.uid, message.content);
                     break;
                 default:
                     console.log(message.head);
@@ -123,7 +125,7 @@ function heartbeat() {
 
 function handleCallRequests(uid, callOffer) {
     connections.forEach((value, connection) => {
-        if (connection.uid != uid) {
+        if (value != uid) {
             connection.send(JSON.stringify(new Message("incommingCall", callOffer)));
         }
     })
@@ -131,14 +133,14 @@ function handleCallRequests(uid, callOffer) {
 
 function handleAcceptRequests(uid, acceptOffer) {
     connections.forEach((value, connection) => {
-        if (connection.uid != uid) {
+        if (value != uid) {
             connection.send(JSON.stringify(new Message("incommingAccept", acceptOffer)));
         }
     })
 }
 function handleIceCandidate(uid, iceCandidate) {
     connections.forEach((value, connection) => {
-        if (connection.uid != uid) {
+        if (value != uid) {
             connection.send(JSON.stringify(new Message("incommingICE", iceCandidate)));
         }
     })
