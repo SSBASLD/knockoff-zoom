@@ -140,9 +140,15 @@ async function setUpSocket() {
                 createTextArea(jsonData.message, "right");
             }
         } else if (jsonData.type == "Info") {
-            console.log(jsonData);
-
             person = jsonData.person;
+
+            for (let message of jsonData.message) {
+                if (message.person == 1) {
+                    createTextArea(message.message, "left");
+                } else {
+                    createTextArea(message.message, "right");
+                }
+            }
         }
     };
 }
