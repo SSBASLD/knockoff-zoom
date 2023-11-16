@@ -27,8 +27,9 @@ class VideoRoom {
     logToString() {
         let string = "";
         for (const message of this.messageLog) {
-            console.log(typeof message);
-            let editedMessage = message.replaceAll("\"", "\\\""); 
+            for (let i = 0; i < editedMessage.length; i++) {
+                let editedMessage = message.replace("\"", "\\\""); 
+            }
             string += `"${editedMessage}"`;
             string += ",";
         }
@@ -122,7 +123,7 @@ wsServer.on('request', function (request) {
     }
     let personIndex = roomConnections[roomKey].addConnection(connection);
     let messageLog = roomConnections[roomKey].logToString();
-    let jsonString= `{"type": "Info", "message": ${messageLog}, "person": "${personIndex}"}`;
+    let jsonString= `{"type": "Info", "message": ["a", "b", "c"], "person": "${personIndex}"}`;
     connection.send(jsonString);
 
     console.log(new Date() + ' Connection accepted.');
