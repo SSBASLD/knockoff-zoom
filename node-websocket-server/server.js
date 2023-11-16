@@ -27,7 +27,7 @@ class VideoRoom {
     logToString() {
         let string = "";
         for (const message of this.messageLog) {
-            string += `"${message}"`;
+            string += `${message}`;
             string += ",";
         }
         string = string.slice(0, string.length - 1);
@@ -120,7 +120,7 @@ wsServer.on('request', function (request) {
     }
     let personIndex = roomConnections[roomKey].addConnection(connection);
     let messageLog = roomConnections[roomKey].logToString();
-    let jsonString= `{"type": "Info", "message": [{"test": 1}], "person": "${personIndex}"}`;
+    let jsonString= `{"type": "Info", "message": ${messageLog}, "person": "${personIndex}"}`;
     connection.send(jsonString);
 
     console.log(new Date() + ' Connection accepted.');
@@ -155,7 +155,7 @@ wsServer.on('request', function (request) {
         }
 
         let jsonString = `{"type": "${type}", "message": "${sentMessage}", "person": "${personIndex}"}`;
-        roomConnections[jsonData.roomKey].messageLog.push(sentMessage);
+        roomConnections[jsonData.roomKey].messageLog.push(jsonString);
         console.log(roomConnections[jsonData.roomKey].messageLog);
         otherConnection.send(jsonString);
     });
