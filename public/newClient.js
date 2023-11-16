@@ -9,7 +9,11 @@ const _constraints = {
         "width": 500,
         "height": 500
     },
-    "audio": true
+    "audio": true,
+    'mandatory': {
+        'offertoreceiveaudio': true,
+        'offertoreceivevideo': true
+    }
 };
 
 const _iceServers = {'iceServers': [{'urls': 'stun:stun3.l.google.com:19302'}]}; // sets up which stun server to use.
@@ -54,6 +58,9 @@ client.onopen = () => {
             console.log(error);
         }
     };
+    client.onclose = (event) => {
+        console.log(event);
+    }
 };
 
 let i = 1;
@@ -69,7 +76,7 @@ async function startUp(isCaller) {
         if (i == 1) {
             let [remoteStream] = event.streams;
             console.log(remoteStream);
-            remoteVideo.src = window.URL.createObjectURL(event.streams[0])
+            remoteVideo.src = remoteStream;
             i = 2;
         }
     });
