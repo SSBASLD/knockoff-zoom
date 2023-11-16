@@ -27,7 +27,8 @@ class VideoRoom {
     logToString() {
         let string = "";
         for (const message of this.messageLog) {
-            string += `'${message}'`;
+            let editedMessage = message.replace("\"", "\\\""); 
+            string += `"${editedMessage}"`;
             string += ",";
         }
         string = string.slice(0, string.length - 1);
