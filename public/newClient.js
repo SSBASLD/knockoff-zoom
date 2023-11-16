@@ -24,6 +24,7 @@ async function start() {
     localVideo = document.getElementById("localVideo");
     remoteVideo = document.getElementById("remoteVideo");
     localStream = await navigator.mediaDevices.getUserMedia(_constraints);
+    console.log(localStream);
     localVideo.srcObject = localStream;
 }
 
@@ -31,8 +32,8 @@ client.onopen = () => {
     console.log("connection established");
     client.onmessage = (event) => {
         try {
-            if (!peerConnection) startUp(false); 
             var message = JSON.parse(event.data);
+            if (!peerConnection && message.head != "Ping") startUp(false);
             switch (message.head) {
                 case "incommingCall":
                     console.log("Recieved New Incomming Call");
@@ -55,9 +56,7 @@ client.onopen = () => {
     };
 };
 
-
-
-
+let i = 1;
 async function startUp(isCaller) {
     peerConnection = new RTCPeerConnection(_iceServers);
     peerConnection.addEventListener("icecandidate", (event) => {
@@ -67,8 +66,12 @@ async function startUp(isCaller) {
         peerConnection.addTrack(track, localStream);
     });
     peerConnection.addEventListener("track", async (event) => {
-        const [remoteStream] = event.streams;
-        remoteVideo.srcObject = remoteStream;
+        if (i == 1) {
+            let [remoteStream] = event.streams;
+            console.log(remoteStream);
+            remoteVideo.src = window.URL.createObjectURL(event.streams[0])
+            i = 2;
+        }
     });
 
     if (isCaller == true) {
@@ -83,8 +86,9 @@ async function acceptCall(offer) {
     peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
     let answer = await peerConnection.createAnswer();
     await peerConnection.setLocalDescription(answer);
+    console.log("aaaaaaaaaaa");
     client.send(JSON.stringify(new Message("acceptRequest", answer)));
-
+    console.log(peerConnection.setLocalDescription);
 }
 
 async function sendIceCandidate(iceCandidate){
