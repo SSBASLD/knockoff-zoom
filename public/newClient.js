@@ -73,12 +73,10 @@ async function startUp(isCaller) {
         peerConnection.addTrack(track, localStream);
     });
     peerConnection.addEventListener("track", async (event) => {
-        if (i == 1) {
-            let [remoteStream] = event.streams;
-            console.log(remoteStream);
-            remoteVideo.src = remoteStream;
-            i = 2;
-        }
+        let [remoteStream] = event.streams;
+        console.log(remoteStream.getVideoTracks().length);
+        remoteVideo.srcObject = remoteStream;
+        
     });
 
     if (isCaller == true) {
