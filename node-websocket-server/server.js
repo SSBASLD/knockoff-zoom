@@ -126,6 +126,7 @@ function heartbeat() {
 function handleCallRequests(uid, callOffer) {
     connections.forEach((value, connection) => {
         if (value != uid) {
+            console.log(`caller: ${uid}, reciever: ${value}`);
             connection.send(JSON.stringify(new Message("incommingCall", callOffer)));
         }
     })
