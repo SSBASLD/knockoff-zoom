@@ -1,10 +1,7 @@
-let chatSquare = document.getElementById("Chat Square");
-chatSquare.style.display = "none";
+const textArea = document.getElementById("chatInput");
+const arrowButton = document.getElementById("Arrow Button");
 
-let textArea = document.getElementById("chatInput");
-let arrowButton = document.getElementById("Arrow Button");
-
-let chatWindow = document.getElementById("Chat Window");
+const chatWindow = document.getElementById("Chat Window");
 
 let diff = 9;
 let topPercentage = 2;
@@ -16,14 +13,34 @@ let oneLineHeight = oneLine.scrollHeight;
 let twoLineHeight = twoLine.scrollHeight;
 let lineDiff = twoLineHeight - oneLineHeight;
 
+const loadingImage = document.getElementById("Loading Image");
+
+chatWindow.style.opacity = "0.5";
+
+let degree = 0;
+const rotateAnimation = setInterval(() => {
+    let rotate = `rotate(${degree + 3}deg)`;
+    degree += 3;
+    loadingImage.style.transform = rotate;
+}, 10);
+
 window.addEventListener('resize', (event) => {
     oneLineHeight = oneLine.scrollHeight;
     twoLineHeight = twoLine.scrollHeight;
+
     lineDiff = twoLineHeight - oneLineHeight;
+    lineDiff = lineDiff == 0 ? 1 : lineDiff;
+
+    console.log(lineDiff);
 });
 
 var person = 2;
 arrowButton.onclick = () => {
+    if (!client.connected) {
+        alert("Not connected to the server");
+        return;
+    }
+
     let value = textArea.value;
     textArea.value = "";
 
@@ -102,6 +119,7 @@ async function setUpSocket() {
 
     client = new WebSocket("wss://node-websocket-server-a4uv.onrender.com/ws/", ['echo-protocol', roomKey]);
     client.onopen = () => {
+        client.connected = true;
         console.log("Connection Established");
     }
 
