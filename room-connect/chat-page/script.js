@@ -2,6 +2,7 @@ const textArea = document.getElementById("chatInput");
 const arrowButton = document.getElementById("Arrow Button");
 
 const chatWindow = document.getElementById("Chat Window");
+const inputChatWindow = document.getElementById("Input Chat Window");
 
 let diff = 9;
 let topPercentage = 2;
@@ -18,11 +19,33 @@ const loadingImage = document.getElementById("Loading Image");
 chatWindow.style.opacity = "0.5";
 
 let degree = 0;
-const rotateAnimation = setInterval(() => {
-    let rotate = `rotate(${degree + 3}deg)`;
-    degree += 3;
-    loadingImage.style.transform = rotate;
-}, 10);
+let rotateAnimation;
+
+function disable() {
+    loadingImage.style.display = "block";
+    rotateAnimation = setInterval(() => {
+        let rotate = `rotate(${degree + 3}deg)`;
+        degree += 3;
+        loadingImage.style.transform = rotate;
+    }, 10);
+
+    chatWindow.style.opacity = "0.5";
+    inputChatWindow.style.opacity = "0.5";
+    textArea.setAttribute('readonly', true);
+    arrowButton.active = false;
+}
+
+function enable() {
+    loadingImage.style.display = "none";
+    clearInterval(rotateAnimation);
+
+    chatWindow.style.opacity = "1";
+    inputChatWindow.style.opacity = "1";
+    textArea.removeAttribute('readonly');
+    arrowButton.active = true;
+}
+
+disable();
 
 window.addEventListener('resize', (event) => {
     oneLineHeight = oneLine.scrollHeight;
@@ -30,38 +53,51 @@ window.addEventListener('resize', (event) => {
 
     lineDiff = twoLineHeight - oneLineHeight;
     lineDiff = lineDiff == 0 ? 1 : lineDiff;
-
-    console.log(lineDiff);
 });
+
+arrowButton.onmouseover = () => {
+    arrowUI("over");
+}
+
+arrowButton.onmouseleave = () => {
+    arrowUI("leave");
+}
+
+arrowButton.onmousedown = () => {
+    arrowUI("down");
+}
+
+arrowButton.onmouseup = () => {
+    arrowUI("up");
+}
+
+function arrowUI(event) {
+    if (!arrowButton.active) return;
+
+    let path = "../../images/"
+    switch (event) {
+        case "over":
+            path += "arrowHover.png";
+            break;
+        case "leave":
+            path += "arrow.png"
+            break;
+        case "down":
+            path += "arrowPress.png";
+            break;
+        case "up":
+            path += "arrowHover.png"
+            break;
+        default:
+            path += "arrow.png"
+    }
+    arrowButton.src = path;
+}
 
 var person = 2;
 arrowButton.onclick = () => {
-    if (!client.connected) {
-        alert("Not connected to the server");
-        return;
-    }
-
-    let value = textArea.value;
-    textArea.value = "";
-
-    value = value.trim();
-    if (value == "") {
-        return;
-    }
-
-    let jsonText = `{"message": "${value}", "roomKey": "${roomKey}"}`;
-
-    client.send(jsonText);
-
-    let oneLineBreak = document.createElement("br");
-    let twoLineBreak = document.createElement("br");
-    if (person != null) {
-        if (person == 1) {
-            createTextArea(value, "left");
-        } else {
-            createTextArea(value, "right");
-        }
-    }
+    if (!arrowButton.active) return;
+    handleMessage();
 }
 
 function createTextArea(value, side) {
@@ -109,21 +145,59 @@ function createTextArea(value, side) {
     chatWindow.scrollTop = chatWindow.scrollHeight - chatWindow.clientHeight;
 }
 
+textArea.addEventListener("keypress", (e) => {
+    if (!arrowButton.active) return;
+
+    if (e.key == "Enter") {
+        handleMessage();
+    }
+});
+
+function handleMessage() {
+    if (!client.connected) {
+        alert("Not connected to the server");
+        return;
+    }
+
+    let value = textArea.value;
+    textArea.value = "";
+
+    value = value.trim();
+    if (value == "") {
+        return;
+    }
+
+    let jsonText = `{"message": "${value}", "roomKey": "${roomKey}"}`;
+
+    client.send(jsonText);
+
+    let oneLineBreak = document.createElement("br");
+    let twoLineBreak = document.createElement("br");
+    if (person != null) {
+        if (person == 1) {
+            createTextArea(value, "left");
+        } else {
+            createTextArea(value, "right");
+        }
+    }
+}
+
 let roomKey;
 let client;
 let autoReconnectDelay = 5000;
 async function setUpSocket() {
     roomKey = await sessionStorage.getItem('Room Key');
-    console.log(roomKey);
 
 
     client = new WebSocket("wss://node-websocket-server-a4uv.onrender.com/ws/", ['echo-protocol', roomKey]);
     client.onopen = () => {
+        enable();
         client.connected = true;
         console.log("Connection Established");
     }
 
     client.onclose = function(e) {
+        disable();
         console.log('echo-protocol Client Closed');
         console.log(e.reason);
 
@@ -134,7 +208,6 @@ async function setUpSocket() {
 
     client.onmessage = (message) => {
         try {
-            console.log(message.data);
             var jsonData = JSON.parse(message.data);
         } catch (e) {
             if (message.data == "ping") { 
