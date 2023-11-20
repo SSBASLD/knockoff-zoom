@@ -39,7 +39,6 @@ let wsServer = new WebSocketServer({
     autoAcceptConnections: false,
 });
 
-//Might actually change this if we need to
 function originIsAllowed(origin) {
     // put logic here to detect whether the specified origin is allowed.
     return true;
@@ -75,8 +74,8 @@ wsServer.on('request', function (request) {
     connection.on('message', (event) => { // Handles messages sent to WS
         console.log(connection.uid);
         try {
-            var message = JSON.parse(event.utf8Data)
-            switch (message.head) {
+            var message = JSON.parse(event.utf8Data) // try to parse the data sent from client
+            switch (message.head) { // Handles requests sent from clients
                 case "callRequest":
                     console.log("Handling New Call Request");
                     handleCallRequests(connection.uid, message.content);
@@ -109,7 +108,7 @@ wsServer.on('request', function (request) {
     });
 });
 
-function heartbeat() {
+function heartbeat() { // Pings the client ever so often to check if the connection is still alive
     connections.forEach((value, connection, map) => {
         if (connection.isAlive === false) {
             console.log("Connection Killed");
@@ -123,7 +122,7 @@ function heartbeat() {
     })
 }
 
-function handleCallRequests(uid, callOffer) {
+function handleCallRequests(uid, callOffer) {  // sends call offer to other client
     connections.forEach((value, connection) => {
         if (value != uid) {
             console.log(`caller: ${uid}, reciever: ${value}`);
@@ -132,16 +131,14 @@ function handleCallRequests(uid, callOffer) {
     })
 }
 
-function handleAcceptRequests(uid, acceptOffer) {
+function handleAcceptRequests(uid, acceptOffer) { // sends accept offer to other client
     connections.forEach((value, connection) => {
         if (value != uid) {
-            console.log(uid);
-            console.log(value);
             connection.send(JSON.stringify(new Message("incommingAccept", acceptOffer)));
         }
     })
 }
-function handleIceCandidate(uid, iceCandidate) {
+function handleIceCandidate(uid, iceCandidate) { // sends ice candidate to other client
     connections.forEach((value, connection) => {
         if (value != uid) {
             connection.send(JSON.stringify(new Message("incommingICE", iceCandidate)));
