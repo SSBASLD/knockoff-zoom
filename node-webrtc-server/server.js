@@ -11,7 +11,6 @@ var WebSocketServer = require('websocket').server;
 /* Create a websocket server based on the http server. 
 This means it can accept the requests of the http server */
 let wsServer = new WebSocketServer({
-    httpServer: server,
     // You should not use autoAcceptConnections for production
     // applications, as it defeats all standard cross-origin protection
     // facilities built into the protocol and the browser.  You should
