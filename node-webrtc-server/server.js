@@ -6,26 +6,7 @@ class Message{
     }
 }   
 //Import the required dependencies
-const express = require("express")
-const app = express();
 var WebSocketServer = require('websocket').server;
-var http = require('http');
-
-//Create a http server with a simple request listener
-  //A http server is simply a computer program that uses the response/request model implemented by the World Wide Web and the HTTP
-var server = http.Server(app,function (request, response) {
-    console.log("hi");
-
-    //Log the time of the request
-    console.log(new Date() + ' Received request for ' + request.url);
-    response.writeHead(200);
-    response.end();
-});
-
-//Starts the server and makes it listen on port 8080
-server.listen(8080, function () {
-    console.log(new Date() + ' Server is listening on port 8080');
-});
 
 /* Create a websocket server based on the http server. 
 This means it can accept the requests of the http server */
