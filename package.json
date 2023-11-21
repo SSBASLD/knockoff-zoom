@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "devStart": "nodemon node-websocket-server/server.js"
+    "startSocket": "nodemon node-websocket-server/server.js",
+    "startWebRTC": "nodemon ndoe-webrtc-server/server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
