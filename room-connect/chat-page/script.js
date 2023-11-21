@@ -187,7 +187,7 @@ let client;
 let autoReconnectDelay = 5000;
 async function setUpSocket() {
     roomKey = await sessionStorage.getItem('Room Key');
-
+    console.log(roomKey);
 
     client = new WebSocket("wss://node-websocket-server-a4uv.onrender.com/ws/", ['echo-protocol', roomKey]);
     client.onopen = () => {

@@ -9,6 +9,18 @@
     transform: translate(-50%, -50%);
 }
 
+.videoFeed {
+  left: 38%; 
+  top: 25.5%; 
+  height: 45%; 
+  width:74%; 
+  border-color: black; 
+  border-width: thick; 
+  border-style: solid;
+  background-color: rgb(128, 128, 128);
+  object-fit: contain;
+}
+
 .person {
   position: absolute;
   -moz-transform: translate(-50%, 0%); /* Firefox */
