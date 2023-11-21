@@ -1,4 +1,4 @@
-class Message{ // Defines messgae class used over websockets
+class Message{ // Defines message class used over websockets
     constructor(head, content) {
         this.head = head;
         this.content = content;
@@ -17,7 +17,7 @@ const _constraints = { // Sets a standardize constraint for video and audio
 };
 
 const _iceServers = {'iceServers': [{'urls': 'stun:stun3.l.google.com:19302'}]}; // sets up which stun server to use.
-const client = new WebSocket('wss://node-webrtc-server.onrender.com/ws/', ['echo-protocol']); // Connects to the websocket server
+const socket = new WebSocket('wss://node-webrtc-server.onrender.com/ws/', ['echo-protocol']); // Connects to the websocket server
 var localVideo;
 var remoteVideo;
 var localStream;
@@ -34,9 +34,9 @@ async function start() { // This runs once the document load
     localVideo.srcObject = localStream; // Makes your video viewable to you
 }
 
-client.onopen = () => {
+socket.onopen = () => {
     console.log("connection established");
-    client.onmessage = (event) => {
+    socket.onmessage = (event) => {
         try {
             var message = JSON.parse(event.data); // When a message is recieved, program will attempt to turn it into JSON
             if (!peerConnection && message.head != "Ping") startUp(false); // Starts up the webrtc process when another user calls
@@ -54,13 +54,13 @@ client.onopen = () => {
                     handleAccept(message.content);
                     break;
                 default: //By default, if message.head does not match, it will automatically assume it was a ping
-                client.send(JSON.stringify(new Message("Ping", "Ping")));
+                socket.send(JSON.stringify(new Message("Ping", "Ping")));
             }
         } catch (error) { 
             console.log(error);
         }
     };
-    client.onclose = (event) => { // when websocket closes, prints out the reason why.
+    socket.onclose = (event) => { // when websocket closes, prints out the reason why.
         console.log(event);
     }
 };
@@ -74,33 +74,33 @@ async function startUp(isCaller) { // Starts up when a user presses the start ca
     localStream.getTracks().forEach(track => { // Whenever the PC obejct is created, add local video to send over
         peerConnection.addTrack(track, localStream);
     });
-    peerConnection.addEventListener("track", async (event) => { // ran whenever recieve new video from other client
+    peerConnection.addEventListener("track", async (event) => { // ran whenever recieve new video from other socket
         let [remoteStream] = event.streams; 
         remoteVideo.srcObject = remoteStream;// Displays the video
         
     });
 
-    if (isCaller == true) { // checks if client is the caller
+    if (isCaller == true) { // checks if socket is the caller
         console.log("Attempting to start call");
         let offer = await peerConnection.createOffer(); // creates a call offer
         await peerConnection.setLocalDescription(offer); // sets the offer as local description
-        client.send(JSON.stringify(new Message("callRequest", offer))); // send the offer to the other client via websocket
+        socket.send(JSON.stringify(new Message("callRequest", offer))); // send the offer to the other socket via websocket
     }
 }
 
-async function acceptCall(offer) { // called when websocket indicate that the client is recieving a call
+async function acceptCall(offer) { // called when websocket indicate that the socket is recieving a call
     peerConnection.setRemoteDescription(new RTCSessionDescription(offer))  // sets the offer sent over as remote description
     let answer = await peerConnection.createAnswer(); // creates a answer offer
     await peerConnection.setLocalDescription(answer); // sets it as local description
-    client.send(JSON.stringify(new Message("acceptRequest", answer))); // sends the answer offer over
+    socket.send(JSON.stringify(new Message("acceptRequest", answer))); // sends the answer offer over
     console.log(peerConnection.setLocalDescription);
 }
 
 async function sendIceCandidate(iceCandidate){ // whenever an ice candidate is recieved
-    client.send(JSON.stringify(new Message("iceCandidate", iceCandidate))); // sends the ice candidate to other client
+    socket.send(JSON.stringify(new Message("iceCandidate", iceCandidate))); // sends the ice candidate to other socket
 }
 async function handleNewIceCandidate(iceCandidate) {
-    await peerConnection.addIceCandidate(iceCandidate); // adds ice candidate whenever recieved from other client
+    await peerConnection.addIceCandidate(iceCandidate); // adds ice candidate whenever recieved from other socket
 }
 async function handleAccept(acceptOffer) {
     await peerConnection.setRemoteDescription(new RTCSessionDescription(acceptOffer)); //  sets the accept request as remote description
