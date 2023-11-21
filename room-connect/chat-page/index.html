@@ -10,7 +10,7 @@
   </head>
   <body>
     <video id="localVideo" autoplay muted class="centered" style="left: 38%; top: 25.5%; height: 45%; width:74%; border-color: black; border-width: thick; border-style: solid;"></video>
-    <button class="centered" style="left:38%; top: 50%;" onclick="start()">Start Video Call</button>
+    <button class="centered" style="left:38%; top: 50%;" onclick="startUp(true)">Start Video Call</button>
     <video id="remoteVideo" autoplay muted class="centered" style="left: 38%; top: 74.5%; height: 45%; width:74%; border-color: black; border-width: thick; border-style: solid;"></video>
 
     <div class="chatWindow centered" style="border-color: transparent">
@@ -50,5 +50,6 @@
     <br>
 	<script src="script.js"></script>
   <script src="newClient.js"></script>
+  <script type="text/javascript">start();</script>
   </body>
 </html>

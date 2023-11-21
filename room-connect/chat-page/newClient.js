@@ -29,8 +29,7 @@ var peerConnection;
 async function start() { // This runs once the document load
     localVideo = document.getElementById("localVideo"); // gets document element
     remoteVideo = document.getElementById("remoteVideo");
-    localStream = await navigator.mediaDevices.getUserMedia(_constraints); //Get video and audxio tracks from user
-    console.log(localStream);
+    localStream = await navigator.mediaDevices.getUserMedia(_constraints); //Get video and audio tracks from user
     localVideo.srcObject = localStream; // Makes your video viewable to you
 }
 
