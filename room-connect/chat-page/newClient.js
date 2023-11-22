@@ -18,6 +18,7 @@ const _constraints = { // Sets a standardize constraint for video and audio
 
 const _iceServers = {'iceServers': [{'urls': 'stun:stun3.l.google.com:19302'}]}; // sets up which stun server to use.
 const socket = new WebSocket('wss://node-webrtc-server.onrender.com/ws/', ['echo-protocol']); // Connects to the websocket server
+var button = document.getElementById("startButton");
 var localVideo;
 var remoteVideo;
 var localStream;
@@ -34,7 +35,8 @@ async function start() { // This runs once the document load
 }
 
 socket.onopen = () => {
-    console.log("connection established");
+    button.disabled = false;
+    console.log("webrtc socket connection established");
     socket.onmessage = (event) => {
         try {
             var message = JSON.parse(event.data); // When a message is recieved, program will attempt to turn it into JSON
