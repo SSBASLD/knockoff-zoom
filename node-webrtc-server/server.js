@@ -60,7 +60,8 @@ wsServer.on('request', function (request) {
     //First set this boolean to true
     //This is part of a ping-pong heartbeat method that makes sure a websocket connection doesn't time out
     request.socket.isAlive = true;
-    
+    let roomKey = request.requestedProtocols[1];
+    console.log(roomKey);
     var connection = request.accept('echo-protocol', request.origin); // Accepts request
     var uid = Math.random().toString(16); // Generates random ID
     connection.uid = uid;

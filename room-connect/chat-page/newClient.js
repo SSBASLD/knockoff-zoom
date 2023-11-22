@@ -17,12 +17,14 @@ const _constraints = { // Sets a standardized constraint for video and audio
 };
 
 const _iceServers = {'iceServers': [{'urls': 'stun:stun3.l.google.com:19302'}]}; // sets up which stun server to use.
-const socket = new WebSocket('wss://node-webrtc-server.onrender.com/ws/', ['echo-protocol']); // Connects to the websocket server
+var roomkey = sessionStorage.getItem("Room Key");
+const socket = new WebSocket('wss://node-webrtc-server.onrender.com/ws/', ['echo-protocol', roomkey]); // Connects to the websocket server
 var button = document.getElementById("startButton");
 var localVideo;
 var remoteVideo;
 var localStream;
 var peerConnection;
+
 
 // The code above defines all the variables needed
 
@@ -35,6 +37,7 @@ async function start() { // This runs once the document load
 }
 
 socket.onopen = () => {
+    console.log(`The Room Key is ${roomkey}`)
     button.disabled = false;
     console.log("webrtc socket connection established");
     socket.onmessage = (event) => {
