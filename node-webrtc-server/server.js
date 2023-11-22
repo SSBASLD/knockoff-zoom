@@ -127,7 +127,7 @@ function heartbeat() { // Pings the client ever so often to check if the connect
 function handleCallRequests(uid, callOffer, givenRoomKey) {  // sends call offer to other client
     connections.forEach((roomKey, connection) => {
         if (roomKey == givenRoomKey && connection.uid != uid) {
-            console.log(`caller: ${uid}, reciever: ${value}`);
+            console.log(`caller: ${uid}, reciever: ${roomKey}`);
             connection.send(JSON.stringify(new Message("incommingCall", callOffer)));
         }
     })
