@@ -65,7 +65,8 @@ wsServer.on('request', function (request) {
     var connection = request.accept('echo-protocol', request.origin); // Accepts request
     var uid = Math.random().toString(16); // Generates random ID
     connection.uid = uid;
-    connections.set(connection, uid); //Add the connections and ties to custom ID
+    connection.roomKey = roomKey;
+    connections.set(connection, roomKey); //Add the connections and ties to custom ID
 
     //The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
     const interval = setInterval(heartbeat, 100000);
@@ -79,15 +80,15 @@ wsServer.on('request', function (request) {
             switch (message.head) { // Handles requests sent from clients
                 case "callRequest":
                     console.log("Handling New Call Request");
-                    handleCallRequests(connection.uid, message.content);
+                    handleCallRequests(connection.uid, message.content, connection.roomKey);
                     break;
                 case "acceptRequest":
                     console.log("Handling Accept Request");
-                    handleAcceptRequests(connection.uid, message.content);
+                    handleAcceptRequests(connection.uid, message.content, connection.roomKey);
                     break;
                 case "iceCandidate":
                     console.log("Handling new ICE candidate");
-                    handleIceCandidate(connection.uid, message.content);
+                    handleIceCandidate(connection.uid, message.content, connection.roomKey);
                     break;
                 default:
                     console.log(message.head);
@@ -123,25 +124,25 @@ function heartbeat() { // Pings the client ever so often to check if the connect
     })
 }
 
-function handleCallRequests(uid, callOffer) {  // sends call offer to other client
+function handleCallRequests(uid, callOffer, givenRoomKey) {  // sends call offer to other client
     connections.forEach((value, connection) => {
-        if (value != uid) {
+        if (roomKey == givenRoomKey && connection.uid != uid) {
             console.log(`caller: ${uid}, reciever: ${value}`);
             connection.send(JSON.stringify(new Message("incommingCall", callOffer)));
         }
     })
 }
 
-function handleAcceptRequests(uid, acceptOffer) { // sends accept offer to other client
+function handleAcceptRequests(uid, acceptOffer, givenRoomKey) { // sends accept offer to other client
     connections.forEach((value, connection) => {
-        if (value != uid) {
+        if (roomKey == givenRoomKey && connection.uid != uid) {
             connection.send(JSON.stringify(new Message("incommingAccept", acceptOffer)));
         }
     })
 }
-function handleIceCandidate(uid, iceCandidate) { // sends ice candidate to other client
-    connections.forEach((value, connection) => {
-        if (value != uid) {
+function handleIceCandidate(uid, iceCandidate, givenRoomKey) { // sends ice candidate to other client
+    connections.forEach((roomKey, connection) => {
+        if (roomKey == givenRoomKey && connection.uid != uid) {
             connection.send(JSON.stringify(new Message("incommingICE", iceCandidate)));
         }
     })
