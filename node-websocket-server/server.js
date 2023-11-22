@@ -28,8 +28,7 @@ class VideoRoom {
     //A simple method to get a connection based on its person number
     getConnectionByIndex(index) {
         for (let [key, value] of this.connections.entries()) {
-            if (value === index)
-              return key;
+            if (value === index) return key;
         }
     }
 

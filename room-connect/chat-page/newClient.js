@@ -4,7 +4,7 @@ class Message{ // Defines message class used over websockets
         this.content = content;
     }
 } 
-const _constraints = { // Sets a standardize constraint for video and audio
+const _constraints = { // Sets a standardized constraint for video and audio
     "video": {
         "width": 500,
         "height": 500
