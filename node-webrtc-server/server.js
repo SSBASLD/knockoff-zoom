@@ -125,7 +125,7 @@ function heartbeat() { // Pings the client ever so often to check if the connect
 }
 
 function handleCallRequests(uid, callOffer, givenRoomKey) {  // sends call offer to other client
-    connections.forEach((value, connection) => {
+    connections.forEach((roomKey, connection) => {
         if (roomKey == givenRoomKey && connection.uid != uid) {
             console.log(`caller: ${uid}, reciever: ${value}`);
             connection.send(JSON.stringify(new Message("incommingCall", callOffer)));
@@ -134,7 +134,7 @@ function handleCallRequests(uid, callOffer, givenRoomKey) {  // sends call offer
 }
 
 function handleAcceptRequests(uid, acceptOffer, givenRoomKey) { // sends accept offer to other client
-    connections.forEach((value, connection) => {
+    connections.forEach((roomKey, connection) => {
         if (roomKey == givenRoomKey && connection.uid != uid) {
             connection.send(JSON.stringify(new Message("incommingAccept", acceptOffer)));
         }
