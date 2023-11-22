@@ -1,9 +1,17 @@
+//Data structure to represent individual chat rooms
 class VideoRoom {
     constructor() {
+        //Easy data structure to manage clients in a room
+        //Important info the server needs to know: order connected (person number), and connection
         this.connections = new Map();
+
+        //Previous messages sent in the room
+        //An array is useful as we can store them when they are sent, thus keeping the order
         this.messageLog = [];
     }
 
+    //This simply handles adding a connection
+    //The max number of people in a room is 2, so the person number can only be 1 or 2
     addConnection(connection) {
         if (this.connections.size == 0) {
             this.connections.set(connection, 1);
@@ -17,13 +25,14 @@ class VideoRoom {
         }
     }
 
+    //A simple method to get a connection based on its person number
     getConnectionByIndex(index) {
         for (let [key, value] of this.connections.entries()) {
-            if (value === index)
-              return key;
+            if (value === index) return key;
         }
     }
 
+    //Converts the message log array into a JSON string array
     logToString() {
         let string = "";
         for (const message of this.messageLog) {
@@ -104,6 +113,7 @@ wsServer.on('request', function (request) {
         return;
     }
 
+    //Gets the room key from the additional data provided in the websocket connection request
     let roomKey = request.requestedProtocols[1];
     
     //Accepting the request returns the socket connection
@@ -115,11 +125,16 @@ wsServer.on('request', function (request) {
     //This is part of a ping-pong heartbeat method that makes sure a websocket connection doesn't time out
     connection.isAlive = true;
 
+    //If a video room hasn't already been intialized, create one
     if (roomConnections[roomKey] == null) {
         roomConnections[roomKey] = new VideoRoom();
     }
+
+    //Find out the person number of the connection
     let personIndex = roomConnections[roomKey].addConnection(connection);
     let messageLog = roomConnections[roomKey].logToString();
+
+    //Send the connection its person number as well as any previous messages in the room
     let jsonString= `{"type": "Info", "message": ${messageLog}, "person": "${personIndex}"}`;
     connection.send(jsonString);
 
@@ -129,48 +144,46 @@ wsServer.on('request', function (request) {
         try {
             var jsonData = JSON.parse(message.utf8Data);
         } catch (e) {
+            //We know that this case isn't an error, so we ignore it
             if (message.utf8Data == "pong") return;
+
             console.log("Message data was not in JSON format");
             console.error(e);
             return;
         } finally {
-            console.log("still alive");
+            //If the connection is responding back, then always set it to alive, no matter the message
             connection.isAlive = true;
         }
 
+        //Finds the other connection in the video room
         let otherIndex = personIndex == 2 ? 1 : 2;
         let otherConnection = roomConnections[jsonData.roomKey].getConnectionByIndex(otherIndex);
 
-        let sentMessage;
-        let type;
+        //If there are no other connections in the video room, send back an error
         if (otherConnection == null) {
-            type = "Error"
-            sentMessage = "Error: Nobody else in room";
-            let jsonString = `{"type": "${type}", "message": "${sentMessage}", "person": ""}`;
+            let jsonString = `{"type": "Error", "message": "Error: Nobody else in room", "person": ""}`;
             connection.send(jsonString);
             return;
-        } else {
-            type = "Message"
-            sentMessage = jsonData.message;
         }
 
-        let jsonString = `{"type": "${type}", "message": "${sentMessage}", "person": "${personIndex}"}`;
+        //Send the message along with who sent it (personIndex)
+        let jsonString = `{"type": "Message", "message": "${jsonData.message}", "person": "${personIndex}"}`;
         roomConnections[jsonData.roomKey].messageLog.push(jsonString);
-        console.log(roomConnections[jsonData.roomKey].messageLog);
         otherConnection.send(jsonString);
     });
 
     //Handle closing of the server
     connection.on('close', function (reasonCode, description) {
+        //Delete the connection that closed from its video room as well as the general connections map
         connections.delete(connection);
         roomConnections[roomKey].connections.delete(connection);
 
+        //Delete the video room if its empty
         if (roomConnections[roomKey].connections.size == 0) {
             roomConnections[roomKey] = null;
         }
 
         console.log(reasonCode + " " + description);
-
         console.log(
             new Date() + ' Peer ' + connection.remoteAddress + ' disconnected.'
         );
