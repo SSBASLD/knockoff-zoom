@@ -57,6 +57,10 @@ socket.onopen = () => {
                     console.log("Recieved New Accept Offer");
                     handleAccept(message.content);
                     break;
+                case "emptyRoom":
+                    alert(`The room is currently empty, please invite someone.
+                    The room key is ${roomkey}`);
+                    break;
                 default: //By default, if message.head does not match, it will automatically assume it was a ping
                 socket.send(JSON.stringify(new Message("Ping", "Ping")));
             }

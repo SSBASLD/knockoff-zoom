@@ -80,7 +80,7 @@ wsServer.on('request', function (request) {
             switch (message.head) { // Handles requests sent from clients
                 case "callRequest":
                     console.log("Handling New Call Request");
-                    handleCallRequests(connection.uid, message.content, connection.roomKey);
+                    handleCallRequests(connection.uid, message.content, connection.roomKey,connection);
                     break;
                 case "acceptRequest":
                     console.log("Handling Accept Request");
@@ -124,13 +124,16 @@ function heartbeat() { // Pings the client ever so often to check if the connect
     })
 }
 
-function handleCallRequests(uid, callOffer, givenRoomKey) {  // sends call offer to other client
+function handleCallRequests(uid, callOffer, givenRoomKey, connection) {  // sends call offer to other client
     connections.forEach((roomKey, connection) => {
         if (roomKey == givenRoomKey && connection.uid != uid) {
             console.log(`caller: ${uid}, reciever: ${roomKey}`);
             connection.send(JSON.stringify(new Message("incommingCall", callOffer)));
+            return true;
         }
-    })
+    });
+    console.log("the room is empty");
+    connection.send(JSON.stringify(new Message("emptyRoom", "emptyRoom")));
 }
 
 function handleAcceptRequests(uid, acceptOffer, givenRoomKey) { // sends accept offer to other client
