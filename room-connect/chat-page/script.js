@@ -7,6 +7,8 @@ const inputChatWindow = document.getElementById("Input Chat Window");
 
 const loadingImage = document.getElementById("Loading Image");
 
+const codeIndicator = document.getElementById("Room Code");
+
 /* These variables are used to determine the difference in height between one line and two lines of text
 We use these values for calculating styling */
 let oneLine = document.getElementById("oneLineHeight");
@@ -222,7 +224,7 @@ function createTextArea(value, side) {
 async function setUpSocket() {
     //First gets the actual room key from session storage
     roomKey = await sessionStorage.getItem('Room Key');
-    console.log(roomKey);
+    codeIndicator.innerHTML = "Room Code: " + roomKey
 
     //Connects the websocket
     client = new WebSocket("wss://node-websocket-server-a4uv.onrender.com/ws/", ['echo-protocol', roomKey]);
