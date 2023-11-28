@@ -1,6 +1,12 @@
 //First we declare all the references that we are going to use
 const textArea = document.getElementById("chatInput");
-const arrowButton = document.getElementById("Arrow Button");
+const arrowButton = document.getElementById("arrow");
+
+const startCallButton = document.getElementById("StartCallButton");
+startCallButton.active = true;
+
+const hangUpButton = document.getElementById("HangUpButton");
+hangUpButton.active = true;
 
 const chatWindow = document.getElementById("Chat Window");
 const inputChatWindow = document.getElementById("Input Chat Window");
@@ -75,44 +81,51 @@ window.addEventListener('resize', (event) => {
     lineDiff = lineDiff == 0 ? 1 : lineDiff;
 });
 
-//Arrow button animations for mouse over and click
-arrowButton.onmouseover = () => {
-    arrowUI("over");
+//Set up button animations
+buttonUISetup(arrowButton);
+buttonUISetup(startCallButton);
+buttonUISetup(hangUpButton);
+
+function buttonUISetup(button) {
+    button.onmouseover = () => {
+        buttonUI(button.id, "over", button);
+    }
+    
+    button.onmouseleave = () => {
+        buttonUI(button.id, "leave", button);
+    }
+    
+    button.onmousedown = () => {
+        buttonUI(button.id, "down", button);
+    }
+    
+    button.onmouseup = () => {
+        buttonUI(button.id, "up", button);
+    }
 }
 
-arrowButton.onmouseleave = () => {
-    arrowUI("leave");
-}
-
-arrowButton.onmousedown = () => {
-    arrowUI("down");
-}
-
-arrowButton.onmouseup = () => {
-    arrowUI("up");
-}
-
-function arrowUI(event) {
-    if (!arrowButton.active) return;
+function buttonUI(name, event, button) {
+    if (!button.active) return;
 
     let path = "../../images/"
     switch (event) {
         case "over":
-            path += "arrowHover.png";
+            path += `${name}Hover.png`;
+            console.log(path);
             break;
         case "leave":
-            path += "arrow.png"
+            path += `${name}.png`;
             break;
         case "down":
-            path += "arrowPress.png";
+            path += `${name}Press.png`;
             break;
         case "up":
-            path += "arrowHover.png"
+            path += `${name}Hover.png`;
             break;
         default:
-            path += "arrow.png"
+            path += `${name}.png`;
     }
-    arrowButton.src = path;
+    button.src = path;
 }
 
 //Adds the onclick function

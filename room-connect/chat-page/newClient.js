@@ -6,8 +6,8 @@ class Message{ // Defines message class used over websockets
 } 
 const _constraints = { // Sets a standardized constraint for video and audio
     "video": {
-        "width": 500,
-        "height": 500
+        "width": 1920,
+        "height": 1080
     },
     "audio": true,
     'mandatory': {

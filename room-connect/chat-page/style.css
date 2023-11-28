@@ -9,6 +9,12 @@
     transform: translate(-50%, -50%);
 }
 
+.callButton {
+  width: 3.5%;
+  left: 69%;
+  top: 4%;
+}
+
 .videoFeed {
   left: 38%; 
   top: 27.5%; 
