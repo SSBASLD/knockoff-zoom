@@ -12,9 +12,12 @@
     <img id="StartCallButton" src=../../images/StartCallButton.png class="centered callButton" data-mdb-trigger="hover" title="Start Video Call" onclick="startUp(true)">
     <img id="HangUpButton" src=../../images/HangUpButton.png class="centered callButton" style="left: 73%; top: 4%;" data-mdb-trigger="hover" title="Hang Up Call">
 
-    <video id="localVideo" autoplay muted class="centered videoFeed" style=""></video>
-    <video id="remoteVideo" autoplay class="centered videoFeed" style="top: 72.5%;"></video>
-
+    <div class="centered videoFeed" style="overflow: hidden">
+      <video id="localVideo" autoplay muted class="centered" style="width: 100%"></video>
+    </div>
+    <div class="centered videoFeed" style="top: 72.5%; overflow: hidden">
+      <video id="remoteVideo" autoplay class="centered" style="width: 100%"></video>
+    </div>
     <div id="Room Code" class="centered" style="left: 38%; top: 4%; width: 53%; font-size: 2vw; text-align: center">
       Room Code:
     </div>
