@@ -3,10 +3,12 @@ const textArea = document.getElementById("chatInput");
 const arrowButton = document.getElementById("arrow");
 
 const startCallButton = document.getElementById("StartCallButton");
-startCallButton.active = true;
+startCallButton.active = false;
+startCallButton.style.opacity = 0.6;
 
 const hangUpButton = document.getElementById("HangUpButton");
-hangUpButton.active = true;
+hangUpButton.active = false;
+hangUpButton.style.opacity = 0.6;
 
 const chatWindow = document.getElementById("Chat Window");
 const inputChatWindow = document.getElementById("Input Chat Window");
@@ -111,7 +113,6 @@ function buttonUI(name, event, button) {
     switch (event) {
         case "over":
             path += `${name}Hover.png`;
-            console.log(path);
             break;
         case "leave":
             path += `${name}.png`;
