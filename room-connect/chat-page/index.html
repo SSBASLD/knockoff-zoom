@@ -10,15 +10,18 @@
   </head>
   <body>
     <img id="StartCallButton" src=../../images/StartCallButton.png class="centered callButton" data-mdb-trigger="hover" title="Start Video Call" onclick="startUp(true)">
-    <img id="HangUpButton" src=../../images/HangUpButton.png class="centered callButton" style="left: 73%; top: 4%;" data-mdb-trigger="hover" title="Hang Up Call">
+    <img id="HangUpButton" src=../../images/HangUpButton.png class="centered callButton" style="left: 72%; top: 7%;" data-mdb-trigger="hover" title="Hang Up Call">
+
+    <div style="border-style:solid; border-color: black; border-radius: 2vw; border-width: 0.4vw; width: 73.3%; height: 44%; left: 1%; top: 3%; position: absolute; pointer-events: none;" ></div> 
+    <div style="background-color: black; width: 74%; height: 88%; left: 1%; top: 10%; position: absolute;"></div>
 
     <div class="centered videoFeed" style="overflow: hidden">
-      <video id="localVideo" autoplay muted class="centered" style="width: 100%"></video>
+      <video id="localVideo" autoplay muted class="centered" style="width: 100%;"></video>
     </div>
-    <div class="centered videoFeed" style="top: 72.5%; overflow: hidden">
+    <div class="centered videoFeed" style="top: 76.5%; overflow: hidden">
       <video id="remoteVideo" autoplay class="centered" style="width: 100%"></video>
     </div>
-    <div id="Room Code" class="centered" style="left: 38%; top: 4%; width: 53%; font-size: 2vw; text-align: center">
+    <div id="Room Code" class="centered" style="left: 21%; top: 7%; width: 38%; font-size: 2vw; text-align: left">
       Room Code:
     </div>
 

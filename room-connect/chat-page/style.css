@@ -10,16 +10,16 @@
 }
 
 .callButton {
-  width: 3.5%;
-  left: 68%;
-  top: 4%;
+  width: 3.3%;
+  left: 67%;
+  top: 7%;
 }
 
 .videoFeed {
   left: 38%; 
-  top: 27.5%; 
-  height: 39%; 
-  width:74%; 
+  top: 31.5%; 
+  height: 41%; 
+  width:54%; 
   border-color: black; 
   border-width: thick; 
   border-style: solid;
