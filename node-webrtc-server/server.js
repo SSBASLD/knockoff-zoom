@@ -130,10 +130,11 @@ function handleCallRequests(uid, callOffer, givenRoomKey, connection) {  // send
             console.log(`caller: ${uid}, reciever: ${roomKey}`);
             connection.send(JSON.stringify(new Message("incommingCall", callOffer)));
             return true;
+        } else {
+            console.log("the room is empty");
+            connection.send(JSON.stringify(new Message("emptyRoom", "emptyRoom")));
         }
     });
-    console.log("the room is empty");
-    connection.send(JSON.stringify(new Message("emptyRoom", "emptyRoom")));
 }
 
 function handleAcceptRequests(uid, acceptOffer, givenRoomKey) { // sends accept offer to other client
