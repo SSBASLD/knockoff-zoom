@@ -125,15 +125,18 @@ function heartbeat() { // Pings the client ever so often to check if the connect
 }
 
 function handleCallRequests(uid, callOffer, givenRoomKey, connection) {  // sends call offer to other client
+    let otherInRoom = false;
     connections.forEach((roomKey, connection) => {
         if (roomKey == givenRoomKey && connection.uid != uid) {
             console.log(`caller: ${uid}, reciever: ${roomKey}`);
             connection.send(JSON.stringify(new Message("incommingCall", callOffer)));
-            return true;
+            otherInRoom = true;
         }
     });
-    console.log("the room is empty");
-    connection.send(JSON.stringify(new Message("emptyRoom", "emptyRoom")));
+    if (otherInRoom == false) {
+        console.log("the room is empty");
+        connection.send(JSON.stringify(new Message("emptyRoom", "emptyRoom")));        
+    }
 }
 
 function handleAcceptRequests(uid, acceptOffer, givenRoomKey) { // sends accept offer to other client
