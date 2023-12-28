@@ -30,8 +30,12 @@ var peerConnection;
 async function start() { // This runs once the document load
     localVideo = document.getElementById("localVideo"); // gets document element
     remoteVideo = document.getElementById("remoteVideo");
-    localStream = await navigator.mediaDevices.getUserMedia(_constraints); //Get video and audio tracks from user
-    localVideo.srcObject = localStream; // Makes your video viewable to you
+    try {
+    localStream = await navigator.mediaDevices.getUserMedia(_constraints);
+    localVideo.srcObject=localStream;    
+    } catch (error) {
+        alert("Please enable your camera and audio, then refresh the page.")
+    }
 }
 
 socket.onopen = () => {
