@@ -4,14 +4,14 @@
     "description": "",
     "main": "server.js",
     "scripts": {
-      "startSocket": "nodemon node-websocket-server/server.js",
-      "startWebRTC": "nodemon node-webrtc-server/server.js"
+        "startSocket": "nodemon node-websocket-server/server.js",
+        "startWebRTC": "nodemon node-webrtc-server/server.js"
     },
     "dependencies": {
-      "express": "^4.18.2",
-      "websocket": "^1.0.34"
+        "express": "^4.18.2",
+        "websocket": "^1.0.34"
     },
     "devDependencies": {
-      "nodemon": "^2.0.4"
+        "nodemon": "^2.0.4"
     }
-  }
+}
