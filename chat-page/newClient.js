@@ -52,7 +52,7 @@ socket.onopen = () => {
             var message = JSON.parse(event.data); // When a message is recieved, program will attempt to turn it into JSON
             if (!peerConnection && message.head != "Ping") startUp(false); // Starts up the webrtc process when another user calls
             switch (message.head) {
-                case "incommingCall": // The switch statements is used to handle certain requests sent over.
+                case "incommingCall": // The switch statements are used to handle certain requests sent over.
                     console.log("Recieved New Incomming Call");
                     acceptCall(message.content);
                     break;

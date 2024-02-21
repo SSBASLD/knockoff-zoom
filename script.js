@@ -4,7 +4,10 @@
     https://www.npmjs.com/package/express - ExpressJS for HTTP servers
     https://www.npmjs.com/package/websocket - websocket package for WebSockets
     https://www.npmjs.com/package/nodemon - Nodemon for hosting local servers during development
+    https://stackoverflow.com/questions/14273978/integrating-websockets-with-a-standard-http-server - Stack Overflow post where the majority of the websocket server code
+    was taken from
 */
+
 
 //Called when client wants to create a room
 async function createRoom() {
