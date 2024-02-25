@@ -1,3 +1,12 @@
+/*
+    The project used the following images:
+    https://commons.wikimedia.org/wiki/File:Eo_circle_blue_arrow-up.svg - Arrow Button Image
+    https://www.onlinewebfonts.com/icon/150873 - Loading Icon Image
+    https://www.svgrepo.com/svg/365892/x-square-thin - X Button Image
+    https://www.istockphoto.com/vector/phone-call-buttons-accept-and-reject-vector-gm1177913248-329023299 - Accept Call Button
+    https://en.wikipedia.org/wiki/File:Default_pfp.svg - Blue and Green Person Images
+*/
+
 //First we declare all the references that we are going to use
 const textArea = document.getElementById("chatInput");
 const arrowButton = document.getElementById("arrow");

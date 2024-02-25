@@ -25,8 +25,6 @@ var http = require('http');
 //Create a http server with a simple request listener
   //A http server is simply a computer program that uses the response/request model implemented by the World Wide Web and the HTTP
 var server = http.Server(app,function (request, response) {
-    console.log("hi");
-
     //Log the time of the request
     console.log(new Date() + ' Received request for ' + request.url);
     response.writeHead(200);
