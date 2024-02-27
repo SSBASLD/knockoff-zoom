@@ -15,10 +15,6 @@ const startCallButton = document.getElementById("StartCallButton");
 startCallButton.active = false;
 startCallButton.style.opacity = 0.6;
 
-const hangUpButton = document.getElementById("HangUpButton");
-hangUpButton.active = false;
-hangUpButton.style.opacity = 0.6;
-
 const chatWindow = document.getElementById("Chat Window");
 const inputChatWindow = document.getElementById("Input Chat Window");
 
@@ -95,7 +91,6 @@ window.addEventListener('resize', (event) => {
 //Set up button animations
 buttonUISetup(arrowButton);
 buttonUISetup(startCallButton);
-buttonUISetup(hangUpButton);
 
 function buttonUISetup(button) {
     button.onmouseover = () => {
@@ -248,14 +243,17 @@ async function setUpSocket() {
     //First gets the actual room key from session storage
     roomKey = await sessionStorage.getItem('Room Key');
 
+    //If there is no room key (most likely from directly going to this page) create one
     if (roomKey == null) {
         roomKey = Math.random().toString(16).slice(9);
 
-        await sessionStorage.setItem(uid, true);
-        await sessionStorage.setItem("Room Key", uid);
+        console.log(roomKey);
+
+        await sessionStorage.setItem(roomKey, true);
+        await sessionStorage.setItem("Room Key", roomKey);
     }
 
-    codeIndicator.innerHTML = "Room Code: " + roomKey
+    codeIndicator.innerHTML = "Room Code: " + roomKey;
 
     //Connects the websocket
     client = new WebSocket("wss://node-websocket-server-a4uv.onrender.com/ws/", ['echo-protocol', roomKey]);
