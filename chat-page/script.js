@@ -247,6 +247,14 @@ function createTextArea(value, side) {
 async function setUpSocket() {
     //First gets the actual room key from session storage
     roomKey = await sessionStorage.getItem('Room Key');
+
+    if (roomKey == null) {
+        roomKey = Math.random().toString(16).slice(9);
+
+        await sessionStorage.setItem(uid, true);
+        await sessionStorage.setItem("Room Key", uid);
+    }
+
     codeIndicator.innerHTML = "Room Code: " + roomKey
 
     //Connects the websocket
