@@ -42,9 +42,7 @@ socket.onopen = () => {
     console.log(`The Room Key is ${roomkey}`)
 
     startCallButton.active = true;
-    hangUpButton.active = true;
     startCallButton.style.opacity = 1;
-    hangUpButton.style.opacity = 1;
 
     console.log("webrtc socket connection established");
     socket.onmessage = (event) => {
