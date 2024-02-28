@@ -11,10 +11,6 @@ body {
   position: absolute;
   left: 50%;
   top: 40%;
-  -moz-transform: translate(-50%, -50%); /* Firefox */
-  -ms-transform: translate(-50%, -50%); /* IE 9 */
-  -webkit-transform: translate(-50%, -50%); /* Safari and Chrome*/
-  -o-transform: translate(-50%, -50%); /* Opera */
   transform: translate(-50%, -50%);
 
   width: 80%;
@@ -27,10 +23,6 @@ body {
   position: absolute;
   left: 50%;
   top: 60%;
-  -moz-transform: translate(-50%, -50%); /* Firefox */
-  -ms-transform: translate(-50%, -50%); /* IE 9 */
-  -webkit-transform: translate(-50%, -50%); /* Safari and Chrome*/
-  -o-transform: translate(-50%, -50%); /* Opera */
   transform: translate(-50%, -50%);
 
   width: 20%;

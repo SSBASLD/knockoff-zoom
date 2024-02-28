@@ -1,0 +1,12 @@
+/*
+    This project used Node.js for the backend websocket server code and 
+
+/*
+    This project uses the following packages and referenced these sources.
+    https://webRTC.org - Webrtc for video connection
+    https://www.npmjs.com/package/express - ExpressJS for HTTP servers
+    https://www.npmjs.com/package/websocket - websocket package for WebSockets
+    https://www.npmjs.com/package/nodemon - Nodemon for hosting local servers during development
+    https://stackoverflow.com/questions/14273978/integrating-websockets-with-a-standard-http-server - Stack Overflow post where the majority of the websocket server code was taken from
+    https://www.freecodecamp.org/news/html-starter-template-a-basic-html5-boilerplate-for-index-html/ - Template HTML file taken from here
+*/

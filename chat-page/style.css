@@ -2,10 +2,6 @@
     position: absolute;
     left: 50%;
     top: 40%;
-    -moz-transform: translate(-50%, -50%); /* Firefox */
-    -ms-transform: translate(-50%, -50%); /* IE 9 */
-    -webkit-transform: translate(-50%, -50%); /* Safari and Chrome*/
-    -o-transform: translate(-50%, -50%); /* Opera */
     transform: translate(-50%, -50%);
 }
 
@@ -29,20 +25,12 @@
 
 .person {
   position: absolute;
-  -moz-transform: translate(-50%, 0%); /* Firefox */
-  -ms-transform: translate(-50%, 0%); /* IE 9 */
-  -webkit-transform: translate(-50%, 0%); /* Safari and Chrome*/
-  -o-transform: translate(-50%, 0%); /* Opera */
   transform: translate(-50%, 0%);
   width: 12%;
 }
 
 .rightTextArea {
   position: absolute;
-  -moz-transform: translate(-50%, 0%); /* Firefox */
-  -ms-transform: translate(-50%, 0); /* IE 9 */
-  -webkit-transform: translate(-50%, 0%); /* Safari and Chrome*/
-  -o-transform: translate(-50%, 0%); /* Opera */
   transform: translate(-50%, 0%);
 
   line-height: 1.3vw;
@@ -59,10 +47,6 @@
 
 .leftTextArea {
   position: absolute;
-  -moz-transform: translate(-50%, 0%); /* Firefox */
-  -ms-transform: translate(-50%, 0); /* IE 9 */
-  -webkit-transform: translate(-50%, 0%); /* Safari and Chrome*/
-  -o-transform: translate(-50%, 0%); /* Opera */
   transform: translate(-50%, 0%);
 
   line-height: 1.3vw;
@@ -110,5 +94,5 @@
 .chatSquare {
 	background: #c00;
 	border-radius: 25px;
-    font-size: 1vw;
+  font-size: 1vw;
 }

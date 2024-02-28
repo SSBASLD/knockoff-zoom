@@ -157,7 +157,7 @@ function handleMessage() {
         return;
     }
 
-    //Gets actual message content
+    //Gets actual message content from the input
     let value = textArea.value;
     //Clears the text area
     textArea.value = "";
