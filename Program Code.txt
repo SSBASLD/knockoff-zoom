@@ -1,12 +1,1143 @@
-/*
-    This project used Node.js for the backend websocket server code and 
+//This project used Node.js (https://nodejs.org/en) for the back-end websocket server code and Render (https://render.com/) for website and server hosting
 
 /*
-    This project uses the following packages and referenced these sources.
+    This project uses the following packages and referenced these sources:
     https://webRTC.org - Webrtc for video connection
     https://www.npmjs.com/package/express - ExpressJS for HTTP servers
     https://www.npmjs.com/package/websocket - websocket package for WebSockets
     https://www.npmjs.com/package/nodemon - Nodemon for hosting local servers during development
+    https://gist.github.com/zziuni/3741933 - Google STUN server link was taken from here for use with WebRTC
     https://stackoverflow.com/questions/14273978/integrating-websockets-with-a-standard-http-server - Stack Overflow post where the majority of the websocket server code was taken from
     https://www.freecodecamp.org/news/html-starter-template-a-basic-html5-boilerplate-for-index-html/ - Template HTML file taken from here
 */
+
+/*
+    The project used the following images:
+    https://commons.wikimedia.org/wiki/File:Eo_circle_blue_arrow-up.svg - Arrow Button Image
+    https://www.onlinewebfonts.com/icon/150873 - Loading Icon Image
+    https://www.svgrepo.com/svg/365892/x-square-thin - X Button Image
+    https://www.istockphoto.com/vector/phone-call-buttons-accept-and-reject-vector-gm1177913248-329023299 - Accept Call Button
+    https://en.wikipedia.org/wiki/File:Default_pfp.svg - Blue and Green Person Images
+*/
+
+/*
+    Notes:
+    When testing the project, please enable webRTC connection from all sources in your browser settings, or the video call may not work properly.
+    This website was designed for computers and Google Chrome. Using other devices or browsers may result in weird displays
+*/
+
+// ./index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home Page - Knockoff Zoom</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+  </head>
+  <body>
+    <main>
+        <h1 class="centered" style="font-size: 5vw;">Knockoff Zoom</h1>
+    </main>
+    <button
+      class="button"
+      style="left: 35%; top: 52%; font-size: 2.5vw;"
+      id="Create a Room Button",
+      onclick="createRoom()"
+    >
+      Create a room
+    </button>
+
+    <button
+      class="button"
+      style="left: 65%; top: 52%; font-size: 2.5vw;"
+      id="Join a Room Popup Button"
+      onclick="popUp(true)"
+    >
+      Join a Room
+    </button>
+
+    <div id="Join Room Popup Div" class="centered popup">
+      <div class="centered", style="font-size: 5vw; top: 20%; text-align: center;">Enter Room Code</div><br />
+      <input class="textInput, centered" id="Room Key Input" style="font-size: 2vw; top: 50%;"/> <br />
+
+      <button
+        class="button popupButton"
+        style="top: 80%; height: 20%; font-size: 2vw;"
+        id="Join a Room Button"
+        onclick="joinRoom()"
+      >
+        Join Room
+      </button>
+
+      <img src=../images/X.png alt="test" class="centered" style="width:5%; height: 15%; left: 96%; top: 10%;" id="X Button">
+    </div>
+
+	  <script src="script.js"></script>
+    <link type="text/css" rel="stylesheet" href="./style.css" />
+  </body>
+</html>
+
+// ./script.js
+//Called when client wants to create a room
+async function createRoom() {
+    //Creates a unique id with a random hexadecimal number
+    //Not actually unique, but its very unlikely for them to be the same
+    var uid = Math.random().toString(16).slice(9);
+
+    //Sets the uid in session storage
+    //We use session storage because we only have to store it until the browser closes
+    await sessionStorage.setItem(uid, true);
+    await sessionStorage.setItem("Room Key", uid);
+    
+    //Takes you to the actual room page
+    let editedString = window.location.href.replace(/index.html/, '');
+    window.location.href = editedString + 'chat-page/index.html';
+}
+
+let roomKeyInput = document.getElementById("Room Key Input");
+
+//Called when the client joins a room with a room key
+async function joinRoom() {
+    //Reads the input
+    let uid = roomKeyInput.value;
+    console.log(uid);
+
+    //Sets the room key for this session
+    await sessionStorage.setItem("Room Key", uid);
+
+    //Takes you to the room page
+    let editedString = window.location.href.replace(/index.html/, '');
+    window.location.href = editedString + 'chat-page/index.html';
+}
+
+//Sets up the close button for the join room popup
+let xButton = document.getElementById("X Button");
+xButton.onclick = () => {
+    popUp();
+}
+
+let joinRoomPopupDiv = document.getElementById('Join Room Popup Div');
+joinRoomPopupDiv.style.display = 'none';
+
+function popUp() {
+    if (joinRoomPopupDiv.style.display === 'none') {
+        joinRoomPopupDiv.style.display = 'block';
+    } else {
+        joinRoomPopupDiv.style.display = 'none';
+    }
+}
+
+// ./style.css
+body {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+  
+ .centered {
+  font-family: 'Trebuchet MS';
+  font-size: 500%;
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+
+  width: 80%;
+  height: 20%;
+}
+  
+.button {
+  font-family: 'Trebuchet MS';
+  font-size: 150%;
+  position: absolute;
+  left: 50%;
+  top: 60%;
+  transform: translate(-50%, -50%);
+
+  width: 20%;
+  height: 10%;
+}
+  
+.popup {
+  background-color: white;
+  border-width: thick;
+  border-style: solid;
+  border-color: black;
+
+  font-size: 300%;
+  text-align: left;
+  padding-left: 3%;
+  padding-top: 3%;
+  top: 50%;
+  width: 50%;
+  height: 30%;
+}
+  
+.textInput {
+  width: 90%;
+  height: 10%;
+  font-size: 90%;
+}
+  
+.popupButton {
+  font-size: 80%;
+  top: 85%;
+}
+
+// ./node-websocket-server/server.js
+//Data structure to represent individual chat rooms
+class VideoRoom {
+    constructor() {
+        //Easy data structure to manage clients in a room
+        //Important info the server needs to know: order connected (person number), and connection
+        this.connections = new Map();
+
+        //Previous messages sent in the room
+        //An array is useful as we can store them when they are sent, thus keeping the order
+        this.messageLog = [];
+    }
+
+    //This simply handles adding a connection
+    //The max number of people in a room is 2, so the person number can only be 1 or 2
+    addConnection(connection) {
+        if (this.connections.size == 0) {
+            this.connections.set(connection, 1);
+            return 1;
+        } else {
+            let indices = this.connections.values().next().value;
+            let otherIndex = (indices == 2) ? 1 : 2;
+    
+            this.connections.set(connection, otherIndex);
+            return otherIndex;
+        }
+    }
+
+    //A simple method to get a connection based on its person number
+    getConnectionByIndex(index) {
+        for (let [key, value] of this.connections.entries()) {
+            if (value === index) return key;
+        }
+    }
+
+    //Converts the message log array into a JSON string array
+    logToString() {
+        let string = "";
+        for (const message of this.messageLog) {
+            string += `${message}`;
+            string += ",";
+        }
+        string = string.slice(0, string.length - 1);
+        string = "[" + string + "]";
+        
+        return string;
+    }
+}
+
+//Import the required dependencies
+const express = require("express")
+var WebSocketServer = require('websocket').server;
+var http = require('http');
+
+//Create an express instance
+const app = express();
+
+//Create a http server with a simple request listener
+  //A http server is simply a computer program that uses the response/request model implemented by the World Wide Web and the HTTP
+var server = http.createServer(app, function (request, response) {
+    //Log the time of the request
+    console.log(new Date() + ' Received request for ' + request.url);
+    response.writeHead(200);
+    response.end();
+});
+
+//Starts the server and makes it listen on port 8080
+server.listen(8080, function () {
+    console.log(new Date() + ' Server is listening on port 8080');
+});
+
+/* Create a websocket server based on the http server. 
+This means it can accept the requests of the http server */
+let wsServer = new WebSocketServer({
+    httpServer: server,
+    // You should not use autoAcceptConnections for production
+    // applications, as it defeats all standard cross-origin protection
+    // facilities built into the protocol and the browser.  You should
+    // *always* verify the connection's origin and decide whether or not
+    // to accept it.
+    autoAcceptConnections: false,
+});
+
+//Might actually change this if we need to
+function originIsAllowed(origin) {
+    // put logic here to detect whether the specified origin is allowed.
+    return true;
+}
+
+//Keep track of all connections to the server
+let roomConnections = {};
+let connections = new Map();
+
+//The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
+const interval = setInterval(() => {
+    connections.forEach((value, connection, map) => {
+        if (connection.isAlive === false) {
+            console.log("connection killed");
+            connections.delete(connection);
+            return connection.socket.end();
+        }
+    
+        connection.isAlive = false;
+        connection.send("ping");
+    })
+}, 10000);
+
+//Add an event listener when the http server recieves a request
+wsServer.on('request', function (request) {
+    if (!originIsAllowed(request.origin)) {
+        // Make sure we only accept requests from an allowed origin
+        request.reject();
+        console.log(new Date() + ' Connection from origin ' + request.origin + ' rejected.');
+        return;
+    }
+
+    //Gets the room key from the additional data provided in the websocket connection request
+    let roomKey = request.requestedProtocols[1];
+    
+    //Accepting the request returns the socket connection
+    var connection = request.accept('echo-protocol', request.origin);
+    //Add the connections
+    connections.set(connection, true);
+
+    //First set this boolean to true
+    //This is part of a ping-pong heartbeat method that makes sure a websocket connection doesn't time out
+    connection.isAlive = true;
+
+    //If a video room hasn't already been intialized, create one
+    if (roomConnections[roomKey] == null) {
+        roomConnections[roomKey] = new VideoRoom();
+    }
+
+    //Find out the person number of the connection
+    let personIndex = roomConnections[roomKey].addConnection(connection);
+    let messageLog = roomConnections[roomKey].logToString();
+
+    //Send the connection its person number as well as any previous messages in the room
+    let jsonString= `{"type": "Info", "message": ${messageLog}, "person": "${personIndex}"}`;
+    connection.send(jsonString);
+
+    console.log(new Date() + ' Connection accepted.');
+    //Handles the messages that the clients send to the server
+    connection.on('message', function (message) {
+        try {
+            var jsonData = JSON.parse(message.utf8Data);
+        } catch (e) {
+            //We know that this case isn't an error, so we ignore it
+            if (message.utf8Data == "pong") return;
+
+            console.log("Message data was not in JSON format");
+            console.error(e);
+            return;
+        } finally {
+            //If the connection is responding back, then always set it to alive, no matter the message
+            connection.isAlive = true;
+        }
+
+        //Finds the other connection in the video room
+        let otherIndex = personIndex == 2 ? 1 : 2;
+        let otherConnection = roomConnections[jsonData.roomKey].getConnectionByIndex(otherIndex);
+
+        //If there are no other connections in the video room, send back an error
+        if (otherConnection == null) {
+            let jsonString = `{"type": "Error", "message": "Error: Nobody else in room", "person": ""}`;
+            connection.send(jsonString);
+            return;
+        }
+
+        //Send the message along with who sent it (personIndex)
+        let jsonString = `{"type": "Message", "message": "${jsonData.message}", "person": "${personIndex}"}`;
+        roomConnections[jsonData.roomKey].messageLog.push(jsonString);
+        otherConnection.send(jsonString);
+    });
+
+    //Handle closing of the server
+    connection.on('close', function (reasonCode, description) {
+        //Delete the connection that closed from its video room as well as the general connections map
+        connections.delete(connection);
+        roomConnections[roomKey].connections.delete(connection);
+
+        //Delete the video room if its empty
+        if (roomConnections[roomKey].connections.size == 0) {
+            roomConnections[roomKey] = null;
+        }
+
+        console.log(reasonCode + " " + description);
+        console.log(
+            new Date() + ' Peer ' + connection.remoteAddress + ' disconnected.'
+        );
+    });
+});
+
+// ./node-webrtc-server
+// Establish new message class for Websockets
+class Message{
+    constructor(head, content) {
+        this.head = head;
+        this.content = content;
+    }
+}   
+//Import the required dependencies
+const express = require("express")
+const app = express();
+var WebSocketServer = require('websocket').server;
+var http = require('http');
+
+//Create a http server with a simple request listener
+  //A http server is simply a computer program that uses the response/request model implemented by the World Wide Web and the HTTP
+var server = http.Server(app,function (request, response) {
+    //Log the time of the request
+    console.log(new Date() + ' Received request for ' + request.url);
+    response.writeHead(200);
+    response.end();
+});
+
+//Starts the server and makes it listen on port 8080
+server.listen(8080, function () {
+    console.log(new Date() + ' Server is listening on port 8080');
+});
+
+/* Create a websocket server based on the http server. 
+This means it can accept the requests of the http server */
+let wsServer = new WebSocketServer({
+    httpServer: server,
+    // You should not use autoAcceptConnections for production
+    // applications, as it defeats all standard cross-origin protection
+    // facilities built into the protocol and the browser.  You should
+    // *always* verify the connection's origin and decide whether or not
+    // to accept it.
+    autoAcceptConnections: false,
+});
+
+function originIsAllowed(origin) {
+    // put logic here to detect whether the specified origin is allowed.
+    return true;
+}
+
+//Keep track of all connections to the server
+let connections = new Map();
+
+//Add an event listener when the http server recieves a request
+wsServer.on('request', function (request) {
+    console.log("hi");
+
+    if (!originIsAllowed(request.origin)) {  // Make sure we only accept requests from an allowed origin
+        request.reject();
+        console.log(new Date() + ' Connection from origin ' + request.origin + ' rejected.');
+        return;
+    }
+
+    //First set this boolean to true
+    //This is part of a ping-pong heartbeat method that makes sure a websocket connection doesn't time out
+    request.socket.isAlive = true;
+    let roomKey = request.requestedProtocols[1];
+    console.log(roomKey);
+    var connection = request.accept('echo-protocol', request.origin); // Accepts request
+    var uid = Math.random().toString(16); // Generates random ID
+    connection.uid = uid;
+    connection.roomKey = roomKey;
+    connections.set(connection, roomKey); //Add the connections and ties to custom ID
+
+    //The heartbeat. This pings each socket that is connected to the server. They should respond back, and so the server knows its alive and will keep it alive
+    const interval = setInterval(heartbeat, 100000);
+
+    console.log(new Date() + ' Connection accepted.'); // Logs connection
+
+    connection.on('message', (event) => { // Handles messages sent to WS
+        console.log(connection.uid);
+        try {
+            var message = JSON.parse(event.utf8Data) // try to parse the data sent from client
+            switch (message.head) { // Handles requests sent from clients
+                case "callRequest":
+                    console.log("Handling New Call Request");
+                    handleCallRequests(connection.uid, message.content, connection.roomKey,connection);
+                    break;
+                case "acceptRequest":
+                    console.log("Handling Accept Request");
+                    handleAcceptRequests(connection.uid, message.content, connection.roomKey);
+                    break;
+                case "iceCandidate":
+                    console.log("Handling new ICE candidate");
+                    handleIceCandidate(connection.uid, message.content, connection.roomKey);
+                    break;
+                default:
+                    console.log(message.head);
+            }
+        } catch (error) {
+            console.log(error);  
+        } finally {
+            console.log("Connection Is Still Alive");
+            connection.isAlive = true;
+        }
+
+    });
+
+    //Handle closing of the server
+    connection.on('close', function (reasonCode, description) {
+        console.log(
+            new Date() + ' Peer ' + connection.remoteAddress + ' disconnected.'
+        );
+    });
+});
+
+function heartbeat() { // Pings the client ever so often to check if the connection is still alive
+    connections.forEach((value, connection, map) => {
+        if (connection.isAlive === false) {
+            console.log("Connection Killed");
+            connections.delete(connection);
+            return connection.socket.end();
+        }
+
+        console.log("Attempting To Ping");
+        connection.isAlive = false;
+        connection.send(JSON.stringify(new Message("Ping", "Ping")));
+    })
+}
+
+function handleCallRequests(uid, callOffer, givenRoomKey, connection) {  // sends call offer to other client
+    let otherInRoom = false;
+    connections.forEach((roomKey, connection) => {
+        if (roomKey == givenRoomKey && connection.uid != uid) {
+            console.log(`caller: ${uid}, reciever: ${roomKey}`);
+            connection.send(JSON.stringify(new Message("incommingCall", callOffer)));
+            otherInRoom = true;
+        }
+    });
+    if (otherInRoom == false) {
+        console.log("the room is empty");
+        connection.send(JSON.stringify(new Message("emptyRoom", "emptyRoom")));        
+    }
+}
+
+function handleAcceptRequests(uid, acceptOffer, givenRoomKey) { // sends accept offer to other client
+    connections.forEach((roomKey, connection) => {
+        if (roomKey == givenRoomKey && connection.uid != uid) {
+            connection.send(JSON.stringify(new Message("incommingAccept", acceptOffer)));
+        }
+    })
+}
+function handleIceCandidate(uid, iceCandidate, givenRoomKey) { // sends ice candidate to other client
+    connections.forEach((roomKey, connection) => {
+        if (roomKey == givenRoomKey && connection.uid != uid) {
+            connection.send(JSON.stringify(new Message("incommingICE", iceCandidate)));
+        }
+    })
+}
+
+// ./chat-page/index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chat Page</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+  </head>
+  <body>
+    <img id="StartCallButton" src=../../images/StartCallButton.png class="centered callButton" title="Start Video Call" onclick="startUp(true)">
+
+    <div style="border-style:solid; border-color: black; border-radius: 2vw; border-width: 0.4vw; width: 73.3%; height: 44%; left: 1%; top: 3%; position: absolute; pointer-events: none;" ></div> 
+    <div style="background-color: black; width: 74%; height: 88%; left: 1%; top: 10%; position: absolute;"></div>
+
+    <div class="centered videoFeed" style="overflow: hidden">
+      <video id="localVideo" autoplay muted class="centered" style="width: 100%;"></video>
+    </div>
+    <div class="centered videoFeed" style="top: 76.5%; overflow: hidden">
+      <video id="remoteVideo" autoplay class="centered" style="width: 100%"></video>
+    </div>
+    <div id="Room Code" class="centered" style="left: 21%; top: 7%; width: 38%; font-size: 2vw; text-align: left">
+      Room Code:
+    </div>
+
+    <div class="chatWindow centered" style="border-color: transparent">
+      <div id="Input Chat Window" class="chatWindow centered" style="width: 97%; height: 6%; left: 50%; top: 96.3%;">
+        <input id="chatInput" class="centered textInput" placeholder="Type messages here..." style="font-size: 1.2vw; height: 40%; top: 50%;">
+        <img src=../../images/arrow.png alt="arrow" class="centered arrowButton" id="arrow">
+      </div> 
+
+        <div class="chatWindow centered" style="top: 46%; height: 91%; width: 97%; left: 50%; font-size: 1.3vw; overflow-y: auto; overflow-x:hidden; margin-bottom: 3vw" id="Chat Window">       
+          <img id="Loading Image" src=../../images/Loading.png class="centered" style="width: 20%; left: 40%; transform: rotate(360deg)">
+          <div id="oneLineHeight" class="rightTextArea" style="transform: translate(-50%, -1239081732091%)">
+            aaaaaaaa
+          </div>
+          <div id="twoLineHeight" class="rightTextArea" style="transform: translate(-50%, -12938712938719%)">
+            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+          </div>
+
+          <div 
+            class="chatWindow centered" 
+            style="top: 45%; height: 90%; width: 80%; left: 38%; font-size: 1.3vw; text-align: right; padding-left: 3vw; border-color: transparent; word-wrap: break-word;" 
+            id="Right Return Text Area"
+          >
+            <br>
+            <br>
+          </div>
+
+          <div 
+            class="chatWindow centered" 
+            style="top: 45%; height: 90%; width: 80%; left: 48%; font-size: 1.3vw; text-align: left; padding-left: 3vw; border-color: transparent; word-wrap: break-word;" 
+            id="Left Return Text Area"
+          >
+          </div>                    
+        </div>
+
+    </div>
+
+    <br>
+	<script src="script.js"></script>
+  <script src="newClient.js"></script>
+  <script type="text/javascript">start();</script>
+  </body>
+</html>
+
+// ./chat-page/newClient.js
+class Message{ // Defines message class used over websockets
+    constructor(head, content) {
+        this.head = head;
+        this.content = content;
+    }
+} 
+const _constraints = { // Sets a standardized constraint for video and audio
+    "video": {
+        "width": 1920,
+        "height": 1080
+    },
+    "audio": true,
+    'mandatory': {
+        'offertoreceiveaudio': true,
+        'offertoreceivevideo': true
+    }
+};
+
+const _iceServers = {'iceServers': [{'urls': 'stun:stun3.l.google.com:19302'}]}; // sets up which stun server to use.
+var roomkey = sessionStorage.getItem("Room Key");
+const socket = new WebSocket('wss://node-webrtc-server.onrender.com/ws/', ['echo-protocol', roomkey]); // Connects to the websocket servers
+var localVideo;
+var remoteVideo;
+var localStream;
+var peerConnection;
+
+// The code above defines all the variables needed
+
+
+async function start() { // This runs once the document load
+    localVideo = document.getElementById("localVideo"); // gets document element
+    remoteVideo = document.getElementById("remoteVideo");
+    try {
+    localStream = await navigator.mediaDevices.getUserMedia(_constraints);
+    localVideo.srcObject=localStream;    
+    } catch (error) {
+        alert("Please enable your camera and audio, then refresh the page.")
+    }
+}
+
+socket.onopen = () => {
+    console.log(`The Room Key is ${roomkey}`)
+
+    startCallButton.active = true;
+    startCallButton.style.opacity = 1;
+
+    console.log("webrtc socket connection established");
+    socket.onmessage = (event) => {
+        try {
+            var message = JSON.parse(event.data); // When a message is recieved, program will attempt to turn it into JSON
+            if (!peerConnection && message.head != "Ping") startUp(false); // Starts up the webrtc process when another user calls
+            switch (message.head) {
+                case "incommingCall": // The switch statements are used to handle certain requests sent over.
+                    console.log("Recieved New Incomming Call");
+                    acceptCall(message.content);
+                    break;
+                case "incommingICE":
+                    console.log("Recieved New ICE Candidate");
+                    handleNewIceCandidate(message.content);
+                    break;
+                case "incommingAccept":
+                    console.log("Recieved New Accept Offer");
+                    handleAccept(message.content);
+                    break;
+                case "emptyRoom":
+                    alert(`The room is currently empty, please invite someone.\nThe room key is ${roomkey}`);
+                    break;
+                default: //By default, if message.head does not match, it will automatically assume it was a ping
+                socket.send(JSON.stringify(new Message("Ping", "Ping")));
+            }
+        } catch (error) { 
+            console.log(error);
+        }
+    };
+    socket.onclose = (event) => { // when websocket closes, prints out the reason why.
+        console.log(event);
+    }
+};
+
+
+async function startUp(isCaller) { // Starts up when a user presses the start call button
+    peerConnection = new RTCPeerConnection(_iceServers); // creates new RTCPeerConnection object and uses ice server provided
+    peerConnection.addEventListener("icecandidate", (event) => {
+        if (event.candidate) sendIceCandidate(event.candidate); 
+    })
+    localStream.getTracks().forEach(track => { // Whenever the PC obejct is created, add local video to send over
+        peerConnection.addTrack(track, localStream);
+    });
+    peerConnection.addEventListener("track", async (event) => { // ran whenever recieve new video from other socket
+        let [remoteStream] = event.streams; 
+        remoteVideo.srcObject = remoteStream;// Displays the video
+        
+    });
+
+    if (isCaller == true) { // checks if socket is the caller
+        console.log("Attempting to start call");
+        let offer = await peerConnection.createOffer(); // creates a call offer
+        await peerConnection.setLocalDescription(offer); // sets the offer as local description
+        socket.send(JSON.stringify(new Message("callRequest", offer))); // send the offer to the other socket via websocket
+    }
+}
+
+async function acceptCall(offer) { // called when websocket indicate that the socket is recieving a call
+    peerConnection.setRemoteDescription(new RTCSessionDescription(offer))  // sets the offer sent over as remote description
+    let answer = await peerConnection.createAnswer(); // creates a answer offer
+    await peerConnection.setLocalDescription(answer); // sets it as local description
+    socket.send(JSON.stringify(new Message("acceptRequest", answer))); // sends the answer offer over
+    console.log(peerConnection.setLocalDescription);
+}
+
+async function sendIceCandidate(iceCandidate){ // whenever an ice candidate is recieved
+    socket.send(JSON.stringify(new Message("iceCandidate", iceCandidate))); // sends the ice candidate to other socket
+}
+async function handleNewIceCandidate(iceCandidate) {
+    await peerConnection.addIceCandidate(iceCandidate); // adds ice candidate whenever recieved from other socket
+}
+async function handleAccept(acceptOffer) {
+    await peerConnection.setRemoteDescription(new RTCSessionDescription(acceptOffer)); //  sets the accept request as remote description
+    console.log("Accepted call");
+}
+
+// ./chat-page/script.js
+//First we declare all the references that we are going to use
+const textArea = document.getElementById("chatInput");
+const arrowButton = document.getElementById("arrow");
+
+const startCallButton = document.getElementById("StartCallButton");
+startCallButton.active = false;
+startCallButton.style.opacity = 0.6;
+
+const chatWindow = document.getElementById("Chat Window");
+const inputChatWindow = document.getElementById("Input Chat Window");
+
+const loadingImage = document.getElementById("Loading Image");
+
+const codeIndicator = document.getElementById("Room Code");
+
+/* These variables are used to determine the difference in height between one line and two lines of text
+We use these values for calculating styling */
+let oneLine = document.getElementById("oneLineHeight");
+let twoLine = document.getElementById("twoLineHeight")
+
+//Declare default values for message styling
+let diff = 9; //This differs from line diff as it represents the space between messages
+let topPercentage = 2;
+
+//Calculate what the difference in line heights is
+let oneLineHeight = oneLine.scrollHeight;
+let twoLineHeight = twoLine.scrollHeight;
+let lineDiff = twoLineHeight - oneLineHeight;
+
+//Declare default values for loading image rotation
+let degree = 0;
+let rotateAnimation;
+
+//Declare default values for message handling
+var person = 2;
+
+//Declare default values for the websocket connection
+let roomKey;
+let client;
+const autoReconnectDelay = 5000;
+
+//Disables the chat window
+function disable() {
+    loadingImage.style.display = "block";
+
+    //Rotate animation for the loading symbol
+    rotateAnimation = setInterval(() => {
+        let rotate = `rotate(${degree + 3}deg)`;
+        degree += 3;
+        loadingImage.style.transform = rotate;
+    }, 10);
+
+    chatWindow.style.opacity = "0.5";
+    inputChatWindow.style.opacity = "0.5";
+    textArea.setAttribute('readonly', true);
+    arrowButton.active = false;
+}
+
+//Enables the chat window
+function enable() {
+    loadingImage.style.display = "none";
+    clearInterval(rotateAnimation);
+
+    chatWindow.style.opacity = "1";
+    inputChatWindow.style.opacity = "1";
+    textArea.removeAttribute('readonly');
+    arrowButton.active = true;
+}
+
+//First disable the chat window because the websocket starts unconnected
+disable();
+
+//Recalculates the difference between lines every time the screen gets resized
+window.addEventListener('resize', (event) => {
+    oneLineHeight = oneLine.scrollHeight;
+    twoLineHeight = twoLine.scrollHeight;
+
+    lineDiff = twoLineHeight - oneLineHeight;
+    lineDiff = lineDiff == 0 ? 1 : lineDiff;
+});
+
+//Set up button animations
+buttonUISetup(arrowButton);
+buttonUISetup(startCallButton);
+
+function buttonUISetup(button) {
+    button.onmouseover = () => {
+        buttonUI(button.id, "over", button);
+    }
+    
+    button.onmouseleave = () => {
+        buttonUI(button.id, "leave", button);
+    }
+    
+    button.onmousedown = () => {
+        buttonUI(button.id, "down", button);
+    }
+    
+    button.onmouseup = () => {
+        buttonUI(button.id, "up", button);
+    }
+}
+
+function buttonUI(name, event, button) {
+    if (!button.active) return;
+
+    let path = "../../images/"
+    switch (event) {
+        case "over":
+            path += `${name}Hover.png`;
+            break;
+        case "leave":
+            path += `${name}.png`;
+            break;
+        case "down":
+            path += `${name}Press.png`;
+            break;
+        case "up":
+            path += `${name}Hover.png`;
+            break;
+        default:
+            path += `${name}.png`;
+    }
+    button.src = path;
+}
+
+//Adds the onclick function
+arrowButton.onclick = () => {
+    //Checks if chat window is disabled
+    if (!arrowButton.active) return;
+    handleMessage();
+}
+
+//Makes it so you can press enter to send messages
+textArea.addEventListener("keypress", (e) => {
+    //Checks if chat window is disabled
+    if (!arrowButton.active) return;
+
+    if (e.key == "Enter") {
+        handleMessage();
+    }
+});
+
+function handleMessage() {
+    //Doesn't let you send a message if not connected to the websocket server
+    if (!client.connected) {
+        alert("Not connected to the server");
+        return;
+    }
+
+    //Gets actual message content from the input
+    let value = textArea.value;
+    //Clears the text area
+    textArea.value = "";
+
+    //Removes whitespace from front and end
+    value = value.trim();
+    //If it was nothing but whitespace ignore the message
+    if (value == "") {
+        return;
+    }
+
+    //Also sends the room key so the server can send the message to the correct room
+    let jsonText = `{"message": "${value}", "roomKey": "${roomKey}"}`;
+    client.send(jsonText);
+
+    //Displays the message just sent
+    if (person != null) {
+        if (person == 1) {
+            createTextArea(value, "left");
+        } else {
+            createTextArea(value, "right");
+        }
+    }
+}
+
+function createTextArea(value, side) {
+    let numOfLines;
+    if (side == "left") {
+        //Creates a blue person image and gives it the correct position and size
+        let bluePerson = document.createElement("img");
+        bluePerson.className = "person";
+        bluePerson.src = "../../images/BluePerson.png"
+        bluePerson.style.left = "7%";
+        bluePerson.style.top = `${topPercentage}%`;
+        //Adds it to the chat window
+        chatWindow.appendChild(bluePerson);
+    
+        //Creates the text div
+        let leftTextArea = document.createElement("div");
+        leftTextArea.className = "leftTextArea";
+    
+        //Gives the text area the message contents 
+        leftTextArea.innerHTML += value;
+        leftTextArea.style.top = `${topPercentage}%`;
+    
+        chatWindow.appendChild(leftTextArea);
+    
+        //Calculates the number of lines the message is
+        let heightLineDivision = Math.floor((leftTextArea.scrollHeight - oneLineHeight) / lineDiff);
+        numOfLines = heightLineDivision + 1;
+    } else if (side == "right") {
+        //Creates a green person image and gives it the correct position and size
+        let greenPerson = document.createElement("img");
+        greenPerson.className = "person";
+        greenPerson.src = "../../images/GreenPerson.png"
+        greenPerson.style.left = "92%";
+        greenPerson.style.top = `${topPercentage}%`;
+        chatWindow.appendChild(greenPerson);
+
+        //Creates text div
+        let rightTextArea = document.createElement("div");
+        rightTextArea.className = "rightTextArea";
+    
+        //Gives the text area the message contents
+        rightTextArea.innerHTML += value;
+        rightTextArea.style.top = `${topPercentage}%`;
+    
+        chatWindow.appendChild(rightTextArea);
+    
+        //Calculates number of lines
+        let heightLineDivision = Math.floor((rightTextArea.scrollHeight - oneLineHeight) / lineDiff);
+        numOfLines = heightLineDivision + 1;
+    }
+    
+    //Increases the position of the next message by a set amount depending on how many lines there are
+    topPercentage += diff + 3*((numOfLines - 2) < 0 ? 0 : numOfLines - 2);
+
+    //Sets the chat windows
+    chatWindow.scrollTop = chatWindow.scrollHeight - chatWindow.clientHeight;
+}
+
+async function setUpSocket() {
+    //First gets the actual room key from session storage
+    roomKey = await sessionStorage.getItem('Room Key');
+
+    //If there is no room key (most likely from directly going to this page) create one
+    if (roomKey == null) {
+        roomKey = Math.random().toString(16).slice(9);
+
+        console.log(roomKey);
+
+        await sessionStorage.setItem(roomKey, true);
+        await sessionStorage.setItem("Room Key", roomKey);
+    }
+
+    codeIndicator.innerHTML = "Room Code: " + roomKey;
+
+    //Connects the websocket
+    client = new WebSocket("wss://node-websocket-server-a4uv.onrender.com/ws/", ['echo-protocol', roomKey]);
+    client.onopen = () => {
+        //When the websocket opens enable the chat window
+        enable();
+        client.connected = true;
+        console.log("Connection Established");
+    }
+
+    client.onclose = function(e) {
+        //When it closes, disable the chat window
+        disable();
+        console.log('echo-protocol Client Closed');
+        console.log(e.reason);
+
+        setTimeout(() => {
+            setUpSocket();
+        }, autoReconnectDelay)
+    };
+
+    client.onmessage = (message) => {
+        try {
+            var jsonData = JSON.parse(message.data);
+        } catch (e) {
+            //We know this will return an error so simply ignore it
+            if (message.data == "ping") { 
+                return;
+            }
+
+            console.log("Message data was not sent in JSON format");
+            console.error(e);
+            return;
+        } finally {
+            //It doesn't matter what, if the server sends something, ping them back
+            //This is so the heartbeat is more consistent and doesn't have to send as many messages
+            client.send('pong');
+        }
+
+        if (jsonData.type == "Error") {
+            //Alerts the client of the error
+            alert(jsonData.message);
+            return;
+        } else if (jsonData.type == "Message") {
+            //Logs the message
+            if (jsonData.person == 1) {
+                createTextArea(jsonData.message, "left");
+            } else {
+                createTextArea(jsonData.message, "right");
+            }
+        } else if (jsonData.type == "Info") {
+            //The server tells the client what number person they were (AKA the order they entered the room)
+            person = jsonData.person;
+
+            //Post all the previous messages that were recorded in the server
+            for (let message of jsonData.message) {
+                if (message.person == 1) {
+                    createTextArea(message.message, "left");
+                } else {
+                    createTextArea(message.message, "right");
+                }
+            }
+        }
+    };
+}
+
+setUpSocket();
+
+// ./chat-page/style.css
+.centered {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%);
+}
+
+.callButton {
+  width: 3.3%;
+  left: 72%;
+  top: 7%;
+}
+
+.videoFeed {
+  left: 38%; 
+  top: 31.5%; 
+  height: 41%; 
+  width:54%; 
+  border-color: black; 
+  border-width: thick; 
+  border-style: solid;
+  background-color: rgb(0, 0, 0);
+  object-fit: contain;
+}
+
+.person {
+  position: absolute;
+  transform: translate(-50%, 0%);
+  width: 12%;
+}
+
+.rightTextArea {
+  position: absolute;
+  transform: translate(-50%, 0%);
+
+  line-height: 1.3vw;
+  top: 45%; 
+  height: 2%; 
+  width: 80%; 
+  left: 38%; 
+  font-size: 1.3vw; 
+  text-align: right; 
+  padding-left: 3vw; 
+  border-color: transparent; 
+  word-wrap: break-word;
+}
+
+.leftTextArea {
+  position: absolute;
+  transform: translate(-50%, 0%);
+
+  line-height: 1.3vw;
+  top: 45%; 
+  height: 2%; 
+  width: 80%; 
+  left: 48%; 
+  font-size: 1.3vw; 
+  text-align: left; 
+  padding-left: 3vw; 
+  border-color: transparent; 
+  word-wrap: break-word;
+}
+
+.chatWindow {
+    background-color: transparent;
+    border-width: thick;
+    border-style: solid;
+    border-color: black;
+  
+    font-size: 300%;
+    text-align: left;
+    padding-left: 3%;
+    padding-top: 3%;
+    top: 50%;
+    left: 88%;
+    width: 20%;
+    height: 90%;
+}
+
+.textInput {
+    left: 46%;
+    top: 96%;
+    width: 85%;
+    height: 3%;
+    font-size: large;
+}
+
+.arrowButton {
+    width: 9%;
+    top: 51%;
+    left: 95%
+}
+
+.chatSquare {
+	background: #c00;
+	border-radius: 25px;
+  font-size: 1vw;
+}
