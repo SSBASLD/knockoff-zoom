@@ -48,6 +48,33 @@ let roomKey;
 let client;
 const autoReconnectDelay = 5000;
 
+//Intialize the default settings for the placement of the chat window profile pics
+const bluePersonStyleValues = [
+    ["left", "7%"],
+    ["top", topPercentage]
+];
+
+const bluePersonValues = [
+    ["className", "person"],
+    ["src", "../../images/BluePerson.png"],
+    ["style", new Map(bluePersonStyleValues)],
+];
+
+const bluePersonSettings = new Map(bluePersonValues);
+
+const greenPersonStyleValues = [
+    ["left", "92%"],
+    ["top", topPercentage]
+];
+
+const greenPersonValues = [
+    ["className", "person"],
+    ["src", "../../images/GreenPerson.png"],
+    ["style", new Map(greenPersonStyleValues)],
+];
+
+const greenPersonSettings = new Map(greenPersonValues);
+
 //Disables the chat window
 function disable() {
     loadingImage.style.display = "block";
@@ -188,10 +215,18 @@ function createTextArea(value, side) {
     if (side == "left") {
         //Creates a blue person image and gives it the correct position and size
         let bluePerson = document.createElement("img");
-        bluePerson.className = "person";
-        bluePerson.src = "../../images/BluePerson.png"
-        bluePerson.style.left = "7%";
-        bluePerson.style.top = `${topPercentage}%`;
+        
+        //Iterate through the settings defined earlier and apply them
+        for (let [key, value] of bluePersonSettings.entries()) {
+            if ((value instanceof Map)) {
+                for (let [secondaryKey, secondaryValue] of value.entries()) {
+                    bluePerson[key][secondaryKey] = secondaryValue;
+                }
+            } else {
+                bluePerson[key] = value;
+            }
+        } 
+
         //Adds it to the chat window
         chatWindow.appendChild(bluePerson);
     
@@ -211,10 +246,18 @@ function createTextArea(value, side) {
     } else if (side == "right") {
         //Creates a green person image and gives it the correct position and size
         let greenPerson = document.createElement("img");
-        greenPerson.className = "person";
-        greenPerson.src = "../../images/GreenPerson.png"
-        greenPerson.style.left = "92%";
-        greenPerson.style.top = `${topPercentage}%`;
+
+        //Iterate through the settings defined earlier and apply them
+        for (let [key, value] of greenPersonSettings.entries()) {
+            if ((value instanceof Map)) {
+                for (let [secondaryKey, secondaryValue] of value.entries()) {
+                    greenPerson[key][secondaryKey] = secondaryValue;
+                }
+            } else {
+                greenPerson[key] = value;
+            }
+        } 
+
         chatWindow.appendChild(greenPerson);
 
         //Creates text div
