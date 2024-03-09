@@ -1,4 +1,4 @@
-//This is Knockoff-Zoom, a chat and video call website between two poeple
+//This is Knockoff-Zoom, a chat and video call website between two people
 
 //This project used Node.js (https://nodejs.org/en) for the back-end websocket server code and Render (https://render.com/) for website and server hosting
 //The website can be found here: https://knockoff-zoom.onrender.com
