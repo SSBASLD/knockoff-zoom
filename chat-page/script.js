@@ -238,6 +238,8 @@ function createTextArea(value, side) {
         leftTextArea.innerHTML += value;
         leftTextArea.style.top = `${topPercentage}%`;
     
+        bluePerson.style.top = `${topPercentage}%`;
+
         chatWindow.appendChild(leftTextArea);
     
         //Calculates the number of lines the message is
@@ -268,6 +270,8 @@ function createTextArea(value, side) {
         rightTextArea.innerHTML += value;
         rightTextArea.style.top = `${topPercentage}%`;
     
+        greenPerson.style.top = `${topPercentage}%`;
+        
         chatWindow.appendChild(rightTextArea);
     
         //Calculates number of lines
@@ -277,6 +281,8 @@ function createTextArea(value, side) {
     
     //Increases the position of the next message by a set amount depending on how many lines there are
     topPercentage += diff + 3*((numOfLines - 2) < 0 ? 0 : numOfLines - 2);
+
+    console.log(topPercentage);
 
     //Sets the chat windows
     chatWindow.scrollTop = chatWindow.scrollHeight - chatWindow.clientHeight;
